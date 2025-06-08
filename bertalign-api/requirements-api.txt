@@ -1,0 +1,17 @@
+# Existing Bertalign dependencies
+numpy<2  # faiss-cpu requires numpy 1.x
+numba==0.60.0
+faiss-cpu==1.7.2
+sentence-splitter==1.4
+sentence-transformers==3.2.1
+
+# FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Development and testing  
+httpx==0.24.1  # Compatible with FastAPI TestClient
+pytest==7.4.3
+pytest-asyncio==0.21.1
