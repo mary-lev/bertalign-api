@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +31,7 @@
             padding: 30px;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
@@ -91,7 +92,7 @@
             border-radius: 8px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-left: 4px solid #3498db;
         }
 
@@ -136,7 +137,7 @@
 
         .pipeline-step:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
         .pipeline-step.implemented {
@@ -275,9 +276,17 @@
             border-radius: 50%;
         }
 
-        .step-status.implemented { background: #28a745; }
-        .step-status.planned { background: #007bff; }
-        .step-status.optimization { background: #dc3545; }
+        .step-status.implemented {
+            background: #28a745;
+        }
+
+        .step-status.planned {
+            background: #007bff;
+        }
+
+        .step-status.optimization {
+            background: #dc3545;
+        }
 
         /* Architecture Layers */
         .layer {
@@ -322,7 +331,7 @@
 
         .module:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .module.implemented {
@@ -354,10 +363,21 @@
             border-radius: 50%;
         }
 
-        .module-status.implemented { background: #28a745; }
-        .module-status.in-progress { background: #ffc107; }
-        .module-status.planned { background: #007bff; }
-        .module-status.optimization { background: #dc3545; }
+        .module-status.implemented {
+            background: #28a745;
+        }
+
+        .module-status.in-progress {
+            background: #ffc107;
+        }
+
+        .module-status.planned {
+            background: #007bff;
+        }
+
+        .module-status.optimization {
+            background: #dc3545;
+        }
 
         .module-title {
             font-weight: 600;
@@ -474,7 +494,7 @@
             border-radius: 8px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-left: 4px solid #dc3545;
         }
 
@@ -585,16 +605,16 @@
                 flex-direction: column;
                 min-width: auto;
             }
-            
+
             .pipeline-step {
                 max-width: none;
                 margin: 10px 0;
             }
-            
+
             .pipeline-step-container {
                 margin: 10px 0;
             }
-            
+
             .pipeline-step::after {
                 content: '↓';
                 bottom: -20px;
@@ -602,7 +622,7 @@
                 top: auto;
                 transform: translateX(50%);
             }
-            
+
             .pipeline-arrow {
                 content: '↓';
                 bottom: -20px;
@@ -612,13 +632,14 @@
                 position: relative;
                 margin: 10px 0;
             }
-            
+
             .header h1 {
                 font-size: 2em;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -634,8 +655,9 @@
 
         <div class="section">
             <h2>Complete Processing Pipeline</h2>
-            <p>End-to-end workflow from TEI input to aligned TEI output with alternative alignment strategies via different API endpoints</p>
-            
+            <p>End-to-end workflow from TEI input to aligned TEI output with alternative alignment strategies via
+                different API endpoints</p>
+
             <div class="pipeline-container">
                 <div class="pipeline">
                     <div class="pipeline-step planned" onclick="highlightStep(this)">
@@ -648,7 +670,7 @@
                             <div class="tech-pill">HTTP POST</div>
                         </div>
                     </div>
-                    
+
                     <div class="pipeline-step planned">
                         <div class="step-status planned"></div>
                         <div class="step-title">TEI Parsing</div>
@@ -659,23 +681,24 @@
                             <div class="tech-pill">Structure Mapping</div>
                         </div>
                     </div>
-                    
+
                     <div class="pipeline-step-container">
                         <div class="alignment-alternatives">
                             <div class="alternative-label">Alignment Strategy Selection</div>
                             <div class="pipeline-step optimization">
                                 <div class="step-status optimization"></div>
                                 <div class="step-title">Enhanced Bertalign Core</div>
-                                <div class="step-subtitle">Sentence-level endpoint: integrated splitting, embeddings, and alignment</div>
+                                <div class="step-subtitle">Sentence-level endpoint: integrated splitting, embeddings,
+                                    and alignment</div>
                                 <div class="step-tech">
                                     <div class="tech-pill">HuggingFace</div>
                                     <div class="tech-pill">LaBSE</div>
                                     <div class="tech-pill">Modified Bertalign</div>
                                 </div>
                             </div>
-                            
+
                             <div class="or-divider">OR</div>
-                            
+
                             <div class="pipeline-step planned">
                                 <div class="step-status planned"></div>
                                 <div class="step-title">Word-Level Alignment</div>
@@ -686,10 +709,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="pipeline-arrow">→</div>
                     </div>
-                    
+
                     <div class="pipeline-step planned">
                         <div class="step-status planned"></div>
                         <div class="step-title">TEI Reconstruction</div>
@@ -700,7 +723,7 @@
                             <div class="tech-pill">TEI P5</div>
                         </div>
                     </div>
-                    
+
                     <div class="pipeline-step planned">
                         <div class="step-status planned"></div>
                         <div class="step-title">Response Delivery</div>
@@ -716,12 +739,16 @@
             <div class="optimization-alert">
                 <div class="optimization-title">Current Optimization Strategy</div>
                 <div class="optimization-desc">
-                    <strong>Removing Language Detection:</strong> Eliminating googletrans dependency to reduce Docker image size. 
-                    <strong>Rebuilding Bertalign:</strong> Integrating embeddings generation directly into Bertalign logic using HuggingFace API. 
-                    <strong>Alternative Endpoints:</strong> Separate API endpoints for sentence-level and word-level alignment strategies.
-                    <strong>Cloud Deployment:</strong> Docker images built on Google Cloud with lazy model loading at deployment.
+                    <strong>Removing Language Detection:</strong> Eliminating googletrans dependency to reduce Docker
+                    image size.
+                    <strong>Rebuilding Bertalign:</strong> Integrating embeddings generation directly into Bertalign
+                    logic using HuggingFace API.
+                    <strong>Alternative Endpoints:</strong> Separate API endpoints for sentence-level and word-level
+                    alignment strategies.
+                    <strong>Cloud Deployment:</strong> Docker images built on Google Cloud with lazy model loading at
+                    deployment.
                 </div>
-                
+
                 <div class="optimization-strategies">
                     <div class="strategies-title">Implementation Strategies:</div>
                     <ul class="strategies-list">
@@ -737,7 +764,7 @@
 
         <div class="section">
             <h2>System Architecture Layers</h2>
-            
+
             <div class="layer">
                 <div class="layer-header">
                     <span>API Gateway Layer</span>
@@ -748,7 +775,8 @@
                         <div class="module implemented">
                             <div class="module-status implemented"></div>
                             <div class="module-title">FastAPI Application</div>
-                            <div class="module-desc">Asynchronous web framework with automatic OpenAPI documentation, request validation, and error handling</div>
+                            <div class="module-desc">Asynchronous web framework with automatic OpenAPI documentation,
+                                request validation, and error handling</div>
                             <div class="module-tech">
                                 <div class="tech-tag">FastAPI</div>
                                 <div class="tech-tag">Uvicorn</div>
@@ -756,21 +784,23 @@
                                 <div class="tech-tag">OpenAPI</div>
                             </div>
                         </div>
-                        
+
                         <div class="module implemented">
                             <div class="module-status implemented"></div>
                             <div class="module-title">Request Validation</div>
-                            <div class="module-desc">Input validation and sanitization using Pydantic models for alignment request payloads</div>
+                            <div class="module-desc">Input validation and sanitization using Pydantic models for
+                                alignment request payloads</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Pydantic Models</div>
                                 <div class="tech-tag">Type Validation</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">Rate Limiting & Authentication</div>
-                            <div class="module-desc">Request throttling and API key management for production deployment</div>
+                            <div class="module-desc">Request throttling and API key management for production deployment
+                            </div>
                             <div class="module-tech">
                                 <div class="tech-tag">Redis</div>
                                 <div class="tech-tag">slowapi</div>
@@ -791,7 +821,8 @@
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">TEI Document Parser</div>
-                            <div class="module-desc">Comprehensive TEI P5 XML parsing with metadata extraction, structure preservation, and validation</div>
+                            <div class="module-desc">Comprehensive TEI P5 XML parsing with metadata extraction,
+                                structure preservation, and validation</div>
                             <div class="module-tech">
                                 <div class="tech-tag">lxml</div>
                                 <div class="tech-tag">TEI P5 Schema</div>
@@ -799,22 +830,24 @@
                                 <div class="tech-tag">XML Validation</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">Text Extraction & Mapping</div>
-                            <div class="module-desc">Extract plain text content while maintaining precise position mapping to original TEI structure</div>
+                            <div class="module-desc">Extract plain text content while maintaining precise position
+                                mapping to original TEI structure</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Text Extraction</div>
                                 <div class="tech-tag">Position Mapping</div>
                                 <div class="tech-tag">Structure Preservation</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">TEI Reconstructor</div>
-                            <div class="module-desc">Rebuild TEI documents with alignment annotations using linkGrp elements according to TEI P5 standards</div>
+                            <div class="module-desc">Rebuild TEI documents with alignment annotations using linkGrp
+                                elements according to TEI P5 standards</div>
                             <div class="module-tech">
                                 <div class="tech-tag">lxml.builder</div>
                                 <div class="tech-tag">linkGrp Generation</div>
@@ -835,7 +868,8 @@
                         <div class="module optimization">
                             <div class="module-status optimization"></div>
                             <div class="module-title">Enhanced Bertalign Core</div>
-                            <div class="module-desc">Rebuilt Bertalign with integrated HuggingFace embeddings generation, removing external dependencies</div>
+                            <div class="module-desc">Rebuilt Bertalign with integrated HuggingFace embeddings
+                                generation, removing external dependencies</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Modified Bertalign</div>
                                 <div class="tech-tag">HuggingFace API</div>
@@ -844,25 +878,28 @@
                             </div>
                             <div class="strategy-box">
                                 <div class="strategy-title">Optimization Strategy</div>
-                                <div class="strategy-desc">Removing googletrans dependency and integrating HuggingFace API calls directly into alignment logic</div>
+                                <div class="strategy-desc">Removing googletrans dependency and integrating HuggingFace
+                                    API calls directly into alignment logic</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">Word-Level Alignment Module</div>
-                            <div class="module-desc">Separate processing component for word-level alignment, operating independently from Bertalign</div>
+                            <div class="module-desc">Separate processing component for word-level alignment, operating
+                                independently from Bertalign</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Word Embeddings</div>
                                 <div class="tech-tag">Token Alignment</div>
                                 <div class="tech-tag">Similarity Metrics</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">Caching System</div>
-                            <div class="module-desc">Redis-based caching for embeddings and alignment results to improve performance</div>
+                            <div class="module-desc">Redis-based caching for embeddings and alignment results to improve
+                                performance</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Redis</div>
                                 <div class="tech-tag">Embedding Cache</div>
@@ -883,7 +920,8 @@
                         <div class="module implemented">
                             <div class="module-status implemented"></div>
                             <div class="module-title">Google Cloud Run Deployment</div>
-                            <div class="module-desc">Containerized deployment with auto-scaling, utilizing Google Cloud Build for optimized Docker images</div>
+                            <div class="module-desc">Containerized deployment with auto-scaling, utilizing Google Cloud
+                                Build for optimized Docker images</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Docker</div>
                                 <div class="tech-tag">Cloud Run</div>
@@ -891,22 +929,24 @@
                                 <div class="tech-tag">Auto-scaling</div>
                             </div>
                         </div>
-                        
+
                         <div class="module optimization">
                             <div class="module-status optimization"></div>
                             <div class="module-title">Model Deployment Strategy</div>
-                            <div class="module-desc">Lazy loading of models at deployment stage with HuggingFace API integration for reduced image size</div>
+                            <div class="module-desc">Lazy loading of models at deployment stage with HuggingFace API
+                                integration for reduced image size</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Lazy Loading</div>
                                 <div class="tech-tag">HuggingFace API</div>
                                 <div class="tech-tag">Container Optimization</div>
                             </div>
                         </div>
-                        
+
                         <div class="module planned">
                             <div class="module-status planned"></div>
                             <div class="module-title">Monitoring & Logging</div>
-                            <div class="module-desc">Comprehensive monitoring, logging, and performance tracking for production deployment</div>
+                            <div class="module-desc">Comprehensive monitoring, logging, and performance tracking for
+                                production deployment</div>
                             <div class="module-tech">
                                 <div class="tech-tag">Cloud Logging</div>
                                 <div class="tech-tag">Cloud Monitoring</div>
@@ -921,26 +961,24 @@
         <div class="integration-section">
             <div class="integration-title">Frontend Integration Requirements</div>
             <p>Critical components needed for complete system integration between frontend and backend services</p>
-            
+
             <div class="integration-components">
                 <div class="integration-item">
                     <h4>Frontend Request Handler</h4>
-                    <p>Implementation of HTTP client for sending TEI documents to backend alignment service with proper error handling and timeout management</p>
+                    <p>Integration of alignment service calls into existing frontend infrastructure</p>
                 </div>
-                
-                <div class="integration-item">
-                    <h4>Results Visualization Component</h4>
-                    <p>User interface components for displaying aligned TEI documents, including interactive visualization of sentence and word-level alignments</p>
-                </div>
-                
+
+
                 <div class="integration-item">
                     <h4>Progress Tracking Interface</h4>
-                    <p>Real-time progress indicators for long-running alignment processes, including status updates and estimated completion times</p>
+                    <p>Real-time progress indicators for long-running alignment processes, including status updates and
+                        estimated completion times</p>
                 </div>
-                
+
                 <div class="integration-item">
                     <h4>Error Handling & Feedback</h4>
-                    <p>Comprehensive error messaging and user feedback system for failed alignment requests or invalid TEI document submissions</p>
+                    <p>Comprehensive error messaging and user feedback system for failed alignment requests or invalid
+                        TEI document submissions</p>
                 </div>
             </div>
         </div>
@@ -948,12 +986,13 @@
         <div class="section">
             <h2>Technical Requirements</h2>
             <p>System specifications and deployment considerations for the DiScEPT backend application</p>
-            
+
             <div class="modules">
                 <div class="module implemented">
                     <div class="module-status implemented"></div>
                     <div class="module-title">Current Deployment: Google Cloud Run</div>
-                    <div class="module-desc">Containerized deployment with automatic scaling, handling Docker images up to 10GB with lazy model loading at startup</div>
+                    <div class="module-desc">Containerized deployment with automatic scaling, handling Docker images up
+                        to 10GB with lazy model loading at startup</div>
                     <div class="module-tech">
                         <div class="tech-tag">Docker Container</div>
                         <div class="tech-tag">Auto-scaling</div>
@@ -961,11 +1000,12 @@
                         <div class="tech-tag">Lazy Loading</div>
                     </div>
                 </div>
-                
+
                 <div class="module planned">
                     <div class="module-status planned"></div>
                     <div class="module-title">Minimum Server Requirements</div>
-                    <div class="module-desc">For potential Institute server deployment: 8GB RAM minimum, GPU recommended for local model inference, Docker support required</div>
+                    <div class="module-desc">For potential Institute server deployment: 8GB RAM minimum, GPU recommended
+                        for local model inference, Docker support required</div>
                     <div class="module-tech">
                         <div class="tech-tag">8GB+ RAM</div>
                         <div class="tech-tag">GPU Optional</div>
@@ -973,11 +1013,12 @@
                         <div class="tech-tag">Python 3.9+</div>
                     </div>
                 </div>
-                
+
                 <div class="module planned">
                     <div class="module-status planned"></div>
                     <div class="module-title">Network & Storage Requirements</div>
-                    <div class="module-desc">HuggingFace API access required, Redis for caching, persistent storage for model cache and temporary processing files</div>
+                    <div class="module-desc">HuggingFace API access required, Redis for caching, persistent storage for
+                        model cache and temporary processing files</div>
                     <div class="module-tech">
                         <div class="tech-tag">Internet Access</div>
                         <div class="tech-tag">Redis Server</div>
@@ -991,27 +1032,57 @@
         <div class="questions-section">
             <h2>Critical Architecture Questions</h2>
             <div class="question-item">
-                <div class="question-title">Deployment Infrastructure Options</div>
-                <div class="question-desc">Should we continue with Google Cloud Run deployment or explore migration to the Institute's server infrastructure? Consider technical requirements, costs, and maintenance responsibilities.</div>
-                <div class="question-impact"><strong>Impact:</strong> Infrastructure costs, data privacy, maintenance overhead, scalability options</div>
+                <div class="question-title">Immediate Prototype Deployment</div>
+                <div class="question-desc">Should we continue with Google Cloud Run for prototype development and
+                    testing, or migrate to Institute servers now?</div>
             </div>
-            
+
+            <div class="question-item">
+                <div class="question-title">Long-term Distribution Strategy</div>
+                <div class="question-desc">What's our vision for service distribution after prototype validation: (1)
+                    Open source release where users self-deploy, (2) Hosted service on Institute infrastructure, (3)
+                    CLARIN infrastructure deployment for European academic access, or (4) Multiple deployment options?
+                    This determines our development priorities and sustainability model.</div>
+            </div>
+
             <div class="question-item">
                 <div class="question-title">Document Length Constraints</div>
-                <div class="question-desc">What are the practical length limits for TEI documents submitted from the frontend? This determines memory allocation strategies, processing timeouts, and potential chunking requirements.</div>
-                <div class="question-impact"><strong>Impact:</strong> Memory management, processing pipeline design, user experience optimization</div>
+                <div class="question-desc">What are the practical length limits for TEI documents submitted from the
+                    frontend?</div>
             </div>
-            
             <div class="question-item">
-                <div class="question-title">Frontend Results Visualization Strategy</div>
-                <div class="question-desc">How should alignment results be visualized in the frontend interface? Consider interactive displays of sentence alignments, confidence scores, and word-level correspondences.</div>
-                <div class="question-impact"><strong>Impact:</strong> User interface design, data format requirements, interaction patterns</div>
+                <div class="question-title">TEI Format Coverage & Scope</div>
+                <div class="question-desc">Should we focus exclusively on the current TEI P5 format we're using, or do
+                    we need to support multiple TEI schema variations and encoding models? What's the scope of TEI
+                    diversity we expect from our users?</div>
             </div>
-            
+
             <div class="question-item">
-                <div class="question-title">Long Text Processing Strategy</div>
-                <div class="question-desc">For lengthy TEI documents that require extended processing time: should we implement chunking with progressive results delivery, or maintain single-request processing with user wait times?</div>
-                <div class="question-impact"><strong>Impact:</strong> User experience design, API architecture complexity, result consistency</div>
+                <div class="question-title">Language Selection Strategy</div>
+                <div class="question-desc">Should we implement a predefined language selection dropdown in the frontend
+                    where users manually choose source and target languages? This would eliminate the need for automatic
+                    language detection (googletrans dependency) and significantly reduce Docker image size.</div>
+                <div class="question-impact"><strong>Impact:</strong> Docker image optimization, dependency reduction,
+                    user workflow simplicity, potential user errors from incorrect language selection</div>
+            </div>
+
+
+
+            <div class="question-item">
+                <div class="question-title">User Base & Concurrent Usage Expectations</div>
+                <div class="question-desc">For normal prototype usage, we expect 1-2 concurrent users, but workshops and
+                    demonstrations could bring sudden spikes of 10-20+ simultaneous requests. Should we implement a
+                    queue-based processing system (similar to eScriptorium) to handle these peak loads gracefully, or
+                    rely on auto-scaling with potential wait times during demos?</div>
+                <div class="question-impact"><strong>Impact:</strong> User experience during demos, infrastructure costs
+                    during idle periods, system complexity, workshop planning requirements</div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">Data Storage</div>
+                <div class="question-desc">What are the privacy requirements for handling potentially unpublished
+                    academic texts or sensitive historical documents? Should we store textual data before and after
+                    alignment to evaluate algorithm performance, or must all processing be ephemeral?</div>
             </div>
         </div>
     </div>
@@ -1021,18 +1092,18 @@
             // Remove previous highlights
             document.querySelectorAll('.pipeline-step').forEach(step => {
                 step.style.background = step.classList.contains('implemented') ? 'linear-gradient(135deg, #f8fff8, #e8f5e8)' :
-                                      step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
-                                      step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
+                    step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
+                        step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
                 step.style.borderColor = step.classList.contains('implemented') ? '#28a745' :
-                                        step.classList.contains('planned') ? '#007bff' :
-                                        step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
+                    step.classList.contains('planned') ? '#007bff' :
+                        step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
             });
-            
+
             // Highlight clicked step
             element.style.background = 'linear-gradient(45deg, #fff3cd, #ffeaa7)';
             element.style.borderColor = '#ffc107';
             element.style.transform = 'scale(1.02)';
-            
+
             setTimeout(() => {
                 element.style.transform = 'translateY(-3px)';
             }, 200);
@@ -1041,17 +1112,17 @@
         // Add interactive hover effects
         document.querySelectorAll('.module').forEach(module => {
             module.addEventListener('mouseenter', () => {
-                const status = module.classList.contains('optimization') ? 'optimization' : 
-                              module.classList.contains('implemented') ? 'implemented' :
-                              module.classList.contains('in-progress') ? 'in-progress' : 'planned';
-                
+                const status = module.classList.contains('optimization') ? 'optimization' :
+                    module.classList.contains('implemented') ? 'implemented' :
+                        module.classList.contains('in-progress') ? 'in-progress' : 'planned';
+
                 const glowColors = {
                     optimization: 'rgba(220, 53, 69, 0.2)',
                     implemented: 'rgba(40, 167, 69, 0.2)',
                     'in-progress': 'rgba(255, 193, 7, 0.2)',
                     planned: 'rgba(0, 123, 255, 0.2)'
                 };
-                
+
                 module.style.boxShadow = `0 4px 15px ${glowColors[status]}`;
             });
         });
@@ -1064,4 +1135,5 @@
         });
     </script>
 </body>
+
 </html>
