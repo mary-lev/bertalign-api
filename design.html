@@ -930,6 +930,20 @@
                             </div>
                         </div>
 
+                        <!-- NEW MODULE ADDED HERE -->
+                        <div class="module planned">
+                            <div class="module-status planned"></div>
+                            <div class="module-title">CI/CD Pipeline</div>
+                            <div class="module-desc">Automated deployment pipeline using GitHub Actions to build and
+                                deploy to Google Cloud Run on code changes</div>
+                            <div class="module-tech">
+                                <div class="tech-tag">GitHub Actions</div>
+                                <div class="tech-tag">CI/CD</div>
+                                <div class="tech-tag">Automated Deployment</div>
+                                <div class="tech-tag">Git Integration</div>
+                            </div>
+                        </div>
+
                         <div class="module optimization">
                             <div class="module-status optimization"></div>
                             <div class="module-title">Model Deployment Strategy</div>
@@ -941,199 +955,200 @@
                                 <div class="tech-tag">Container Optimization</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="module planned">
-                            <div class="module-status planned"></div>
-                            <div class="module-title">Monitoring & Logging</div>
-                            <div class="module-desc">Comprehensive monitoring, logging, and performance tracking for
-                                production deployment</div>
-                            <div class="module-tech">
-                                <div class="tech-tag">Cloud Logging</div>
-                                <div class="tech-tag">Cloud Monitoring</div>
-                                <div class="tech-tag">Performance Metrics</div>
-                            </div>
+            <div class="integration-section">
+                <div class="integration-title">Frontend Integration Requirements</div>
+                <p>Critical components needed for complete system integration between frontend and backend services</p>
+
+                <div class="integration-components">
+                    <div class="integration-item">
+                        <h4>Frontend Request Handler</h4>
+                        <p>Integration of alignment service calls into existing frontend infrastructure</p>
+                    </div>
+
+
+                    <div class="integration-item">
+                        <h4>Progress Tracking Interface</h4>
+                        <p>Real-time progress indicators for long-running alignment processes, including status updates
+                            and
+                            estimated completion times</p>
+                    </div>
+
+                    <div class="integration-item">
+                        <h4>Error Handling & Feedback</h4>
+                        <p>Comprehensive error messaging and user feedback system for failed alignment requests or
+                            invalid
+                            TEI document submissions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Technical Requirements</h2>
+                <p>System specifications and deployment considerations for the DiScEPT backend application</p>
+
+                <div class="modules">
+                    <div class="module implemented">
+                        <div class="module-status implemented"></div>
+                        <div class="module-title">Current Deployment: Google Cloud Run</div>
+                        <div class="module-desc">Containerized deployment with automatic scaling, handling Docker images
+                            up
+                            to 10GB with lazy model loading at startup</div>
+                        <div class="module-tech">
+                            <div class="tech-tag">Docker Container</div>
+                            <div class="tech-tag">Auto-scaling</div>
+                            <div class="tech-tag">Cloud Build</div>
+                            <div class="tech-tag">Lazy Loading</div>
+                        </div>
+                    </div>
+
+                    <div class="module planned">
+                        <div class="module-status planned"></div>
+                        <div class="module-title">Minimum Server Requirements</div>
+                        <div class="module-desc">For potential Institute server deployment: 8GB RAM minimum, GPU
+                            recommended
+                            for local model inference, Docker support required</div>
+                        <div class="module-tech">
+                            <div class="tech-tag">8GB+ RAM</div>
+                            <div class="tech-tag">GPU Optional</div>
+                            <div class="tech-tag">Docker Engine</div>
+                            <div class="tech-tag">Python 3.9+</div>
+                        </div>
+                    </div>
+
+                    <div class="module planned">
+                        <div class="module-status planned"></div>
+                        <div class="module-title">Network & Storage Requirements</div>
+                        <div class="module-desc">HuggingFace API access required, Redis for caching, persistent storage
+                            for
+                            model cache and temporary processing files</div>
+                        <div class="module-tech">
+                            <div class="tech-tag">Internet Access</div>
+                            <div class="tech-tag">Redis Server</div>
+                            <div class="tech-tag">Persistent Storage</div>
+                            <div class="tech-tag">HTTPS Support</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="integration-section">
-            <div class="integration-title">Frontend Integration Requirements</div>
-            <p>Critical components needed for complete system integration between frontend and backend services</p>
+            <div class="questions-section">
+                <h2>Critical Architecture Questions</h2>
+                <div class="question-item">
+                    <div class="question-title">Immediate Prototype Deployment</div>
+                    <div class="question-desc">Should we continue with Google Cloud Run for prototype development and
+                        testing, or migrate to Institute servers now?</div>
+                </div>
 
-            <div class="integration-components">
-                <div class="integration-item">
-                    <h4>Frontend Request Handler</h4>
-                    <p>Integration of alignment service calls into existing frontend infrastructure</p>
+                <div class="question-item">
+                    <div class="question-title">Long-term Distribution Strategy</div>
+                    <div class="question-desc">What's our vision for service distribution after prototype validation:
+                        (1)
+                        Open source release where users self-deploy, (2) Hosted service on Institute infrastructure, (3)
+                        CLARIN infrastructure deployment for European academic access, or (4) Multiple deployment
+                        options?
+                        This determines our development priorities and sustainability model.</div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-title">Document Length Constraints</div>
+                    <div class="question-desc">What are the practical length limits for TEI documents submitted from the
+                        frontend?</div>
+                </div>
+                <div class="question-item">
+                    <div class="question-title">TEI Format Coverage & Scope</div>
+                    <div class="question-desc">Should we focus exclusively on the current TEI P5 format we're using, or
+                        do
+                        we need to support multiple TEI schema variations and encoding models? What's the scope of TEI
+                        diversity we expect from our users?</div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-title">Language Selection Strategy</div>
+                    <div class="question-desc">Should we implement a predefined language selection dropdown in the
+                        frontend
+                        where users manually choose source and target languages? This would eliminate the need for
+                        automatic
+                        language detection (googletrans dependency) and significantly reduce Docker image size.</div>
+                    <div class="question-impact"><strong>Impact:</strong> Docker image optimization, dependency
+                        reduction,
+                        user workflow simplicity, potential user errors from incorrect language selection</div>
                 </div>
 
 
-                <div class="integration-item">
-                    <h4>Progress Tracking Interface</h4>
-                    <p>Real-time progress indicators for long-running alignment processes, including status updates and
-                        estimated completion times</p>
+
+                <div class="question-item">
+                    <div class="question-title">User Base & Concurrent Usage Expectations</div>
+                    <div class="question-desc">For normal prototype usage, we expect 1-2 concurrent users, but workshops
+                        and
+                        demonstrations could bring sudden spikes of 10-20+ simultaneous requests. Should we implement a
+                        queue-based processing system (similar to eScriptorium) to handle these peak loads gracefully,
+                        or
+                        rely on auto-scaling with potential wait times during demos?</div>
+                    <div class="question-impact"><strong>Impact:</strong> User experience during demos, infrastructure
+                        costs
+                        during idle periods, system complexity, workshop planning requirements</div>
                 </div>
 
-                <div class="integration-item">
-                    <h4>Error Handling & Feedback</h4>
-                    <p>Comprehensive error messaging and user feedback system for failed alignment requests or invalid
-                        TEI document submissions</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Technical Requirements</h2>
-            <p>System specifications and deployment considerations for the DiScEPT backend application</p>
-
-            <div class="modules">
-                <div class="module implemented">
-                    <div class="module-status implemented"></div>
-                    <div class="module-title">Current Deployment: Google Cloud Run</div>
-                    <div class="module-desc">Containerized deployment with automatic scaling, handling Docker images up
-                        to 10GB with lazy model loading at startup</div>
-                    <div class="module-tech">
-                        <div class="tech-tag">Docker Container</div>
-                        <div class="tech-tag">Auto-scaling</div>
-                        <div class="tech-tag">Cloud Build</div>
-                        <div class="tech-tag">Lazy Loading</div>
-                    </div>
-                </div>
-
-                <div class="module planned">
-                    <div class="module-status planned"></div>
-                    <div class="module-title">Minimum Server Requirements</div>
-                    <div class="module-desc">For potential Institute server deployment: 8GB RAM minimum, GPU recommended
-                        for local model inference, Docker support required</div>
-                    <div class="module-tech">
-                        <div class="tech-tag">8GB+ RAM</div>
-                        <div class="tech-tag">GPU Optional</div>
-                        <div class="tech-tag">Docker Engine</div>
-                        <div class="tech-tag">Python 3.9+</div>
-                    </div>
-                </div>
-
-                <div class="module planned">
-                    <div class="module-status planned"></div>
-                    <div class="module-title">Network & Storage Requirements</div>
-                    <div class="module-desc">HuggingFace API access required, Redis for caching, persistent storage for
-                        model cache and temporary processing files</div>
-                    <div class="module-tech">
-                        <div class="tech-tag">Internet Access</div>
-                        <div class="tech-tag">Redis Server</div>
-                        <div class="tech-tag">Persistent Storage</div>
-                        <div class="tech-tag">HTTPS Support</div>
-                    </div>
+                <div class="question-item">
+                    <div class="question-title">Data Storage</div>
+                    <div class="question-desc">What are the privacy requirements for handling potentially unpublished
+                        academic texts or sensitive historical documents? Should we store textual data before and after
+                        alignment to evaluate algorithm performance, or must all processing be ephemeral?</div>
                 </div>
             </div>
         </div>
 
-        <div class="questions-section">
-            <h2>Critical Architecture Questions</h2>
-            <div class="question-item">
-                <div class="question-title">Immediate Prototype Deployment</div>
-                <div class="question-desc">Should we continue with Google Cloud Run for prototype development and
-                    testing, or migrate to Institute servers now?</div>
-            </div>
+        <script>
+            function highlightStep(element) {
+                // Remove previous highlights
+                document.querySelectorAll('.pipeline-step').forEach(step => {
+                    step.style.background = step.classList.contains('implemented') ? 'linear-gradient(135deg, #f8fff8, #e8f5e8)' :
+                        step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
+                            step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
+                    step.style.borderColor = step.classList.contains('implemented') ? '#28a745' :
+                        step.classList.contains('planned') ? '#007bff' :
+                            step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
+                });
 
-            <div class="question-item">
-                <div class="question-title">Long-term Distribution Strategy</div>
-                <div class="question-desc">What's our vision for service distribution after prototype validation: (1)
-                    Open source release where users self-deploy, (2) Hosted service on Institute infrastructure, (3)
-                    CLARIN infrastructure deployment for European academic access, or (4) Multiple deployment options?
-                    This determines our development priorities and sustainability model.</div>
-            </div>
+                // Highlight clicked step
+                element.style.background = 'linear-gradient(45deg, #fff3cd, #ffeaa7)';
+                element.style.borderColor = '#ffc107';
+                element.style.transform = 'scale(1.02)';
 
-            <div class="question-item">
-                <div class="question-title">Document Length Constraints</div>
-                <div class="question-desc">What are the practical length limits for TEI documents submitted from the
-                    frontend?</div>
-            </div>
-            <div class="question-item">
-                <div class="question-title">TEI Format Coverage & Scope</div>
-                <div class="question-desc">Should we focus exclusively on the current TEI P5 format we're using, or do
-                    we need to support multiple TEI schema variations and encoding models? What's the scope of TEI
-                    diversity we expect from our users?</div>
-            </div>
+                setTimeout(() => {
+                    element.style.transform = 'translateY(-3px)';
+                }, 200);
+            }
 
-            <div class="question-item">
-                <div class="question-title">Language Selection Strategy</div>
-                <div class="question-desc">Should we implement a predefined language selection dropdown in the frontend
-                    where users manually choose source and target languages? This would eliminate the need for automatic
-                    language detection (googletrans dependency) and significantly reduce Docker image size.</div>
-                <div class="question-impact"><strong>Impact:</strong> Docker image optimization, dependency reduction,
-                    user workflow simplicity, potential user errors from incorrect language selection</div>
-            </div>
+            // Add interactive hover effects
+            document.querySelectorAll('.module').forEach(module => {
+                module.addEventListener('mouseenter', () => {
+                    const status = module.classList.contains('optimization') ? 'optimization' :
+                        module.classList.contains('implemented') ? 'implemented' :
+                            module.classList.contains('in-progress') ? 'in-progress' : 'planned';
 
+                    const glowColors = {
+                        optimization: 'rgba(220, 53, 69, 0.2)',
+                        implemented: 'rgba(40, 167, 69, 0.2)',
+                        'in-progress': 'rgba(255, 193, 7, 0.2)',
+                        planned: 'rgba(0, 123, 255, 0.2)'
+                    };
 
-
-            <div class="question-item">
-                <div class="question-title">User Base & Concurrent Usage Expectations</div>
-                <div class="question-desc">For normal prototype usage, we expect 1-2 concurrent users, but workshops and
-                    demonstrations could bring sudden spikes of 10-20+ simultaneous requests. Should we implement a
-                    queue-based processing system (similar to eScriptorium) to handle these peak loads gracefully, or
-                    rely on auto-scaling with potential wait times during demos?</div>
-                <div class="question-impact"><strong>Impact:</strong> User experience during demos, infrastructure costs
-                    during idle periods, system complexity, workshop planning requirements</div>
-            </div>
-
-            <div class="question-item">
-                <div class="question-title">Data Storage</div>
-                <div class="question-desc">What are the privacy requirements for handling potentially unpublished
-                    academic texts or sensitive historical documents? Should we store textual data before and after
-                    alignment to evaluate algorithm performance, or must all processing be ephemeral?</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function highlightStep(element) {
-            // Remove previous highlights
-            document.querySelectorAll('.pipeline-step').forEach(step => {
-                step.style.background = step.classList.contains('implemented') ? 'linear-gradient(135deg, #f8fff8, #e8f5e8)' :
-                    step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
-                        step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
-                step.style.borderColor = step.classList.contains('implemented') ? '#28a745' :
-                    step.classList.contains('planned') ? '#007bff' :
-                        step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
+                    module.style.boxShadow = `0 4px 15px ${glowColors[status]}`;
+                });
             });
 
-            // Highlight clicked step
-            element.style.background = 'linear-gradient(45deg, #fff3cd, #ffeaa7)';
-            element.style.borderColor = '#ffc107';
-            element.style.transform = 'scale(1.02)';
-
-            setTimeout(() => {
-                element.style.transform = 'translateY(-3px)';
-            }, 200);
-        }
-
-        // Add interactive hover effects
-        document.querySelectorAll('.module').forEach(module => {
-            module.addEventListener('mouseenter', () => {
-                const status = module.classList.contains('optimization') ? 'optimization' :
-                    module.classList.contains('implemented') ? 'implemented' :
-                        module.classList.contains('in-progress') ? 'in-progress' : 'planned';
-
-                const glowColors = {
-                    optimization: 'rgba(220, 53, 69, 0.2)',
-                    implemented: 'rgba(40, 167, 69, 0.2)',
-                    'in-progress': 'rgba(255, 193, 7, 0.2)',
-                    planned: 'rgba(0, 123, 255, 0.2)'
-                };
-
-                module.style.boxShadow = `0 4px 15px ${glowColors[status]}`;
+            // Pipeline step click tracking
+            document.querySelectorAll('.pipeline-step').forEach((step, index) => {
+                step.addEventListener('click', () => {
+                    console.log(`Pipeline step ${index + 1} clicked:`, step.querySelector('.step-title').textContent);
+                });
             });
-        });
-
-        // Pipeline step click tracking
-        document.querySelectorAll('.pipeline-step').forEach((step, index) => {
-            step.addEventListener('click', () => {
-                console.log(`Pipeline step ${index + 1} clicked:`, step.querySelector('.step-title').textContent);
-            });
-        });
-    </script>
+        </script>
 </body>
 
 </html>
