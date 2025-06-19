@@ -735,31 +735,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="optimization-alert">
-                <div class="optimization-title">Current Optimization Strategy</div>
-                <div class="optimization-desc">
-                    <strong>Removing Language Detection:</strong> Eliminating googletrans dependency to reduce Docker
-                    image size.
-                    <strong>Rebuilding Bertalign:</strong> Integrating embeddings generation directly into Bertalign
-                    logic using HuggingFace API.
-                    <strong>Alternative Endpoints:</strong> Separate API endpoints for sentence-level and word-level
-                    alignment strategies.
-                    <strong>Cloud Deployment:</strong> Docker images built on Google Cloud with lazy model loading at
-                    deployment.
-                </div>
-
-                <div class="optimization-strategies">
-                    <div class="strategies-title">Implementation Strategies:</div>
-                    <ul class="strategies-list">
-                        <li>Remove googletrans package entirely from dependencies</li>
-                        <li>Integrate HuggingFace API calls within modified Bertalign logic</li>
-                        <li>Utilize Google Cloud Build for optimized Docker image creation</li>
-                        <li>Implement lazy loading of models at container startup</li>
-                        <li>Separate word-level alignment as independent endpoint and processing module</li>
-                    </ul>
-                </div>
-            </div>
         </div>
 
         <div class="section">
@@ -958,6 +933,7 @@
                     </div>
                 </div>
             </div>
+            </div>
 
             <div class="integration-section">
                 <div class="integration-title">Frontend Integration Requirements</div>
@@ -1037,6 +1013,7 @@
 
             <div class="questions-section">
                 <h2>Critical Architecture Questions</h2>
+
                 <div class="question-item">
                     <div class="question-title">Immediate Prototype Deployment</div>
                     <div class="question-desc">Should we continue with Google Cloud Run for prototype development and
@@ -1046,11 +1023,9 @@
                 <div class="question-item">
                     <div class="question-title">Long-term Distribution Strategy</div>
                     <div class="question-desc">What's our vision for service distribution after prototype validation:
-                        (1)
-                        Open source release where users self-deploy, (2) Hosted service on Institute infrastructure, (3)
-                        CLARIN infrastructure deployment for European academic access, or (4) Multiple deployment
-                        options?
-                        This determines our development priorities and sustainability model.</div>
+                        (1) Open source release where users self-deploy, (2) Hosted service on Institute infrastructure,
+                        (3) CLARIN infrastructure deployment for European academic access, or (4) Multiple deployment
+                        options? This determines our development priorities and sustainability model.</div>
                 </div>
 
                 <div class="question-item">
@@ -1058,97 +1033,130 @@
                     <div class="question-desc">What are the practical length limits for TEI documents submitted from the
                         frontend?</div>
                 </div>
+
                 <div class="question-item">
                     <div class="question-title">TEI Format Coverage & Scope</div>
                     <div class="question-desc">Should we focus exclusively on the current TEI P5 format we're using, or
-                        do
-                        we need to support multiple TEI schema variations and encoding models? What's the scope of TEI
-                        diversity we expect from our users?</div>
+                        do we need to support multiple TEI schema variations and encoding models? What's the scope of
+                        TEI diversity we expect from our users?</div>
                 </div>
 
                 <div class="question-item">
                     <div class="question-title">Language Selection Strategy</div>
                     <div class="question-desc">Should we implement a predefined language selection dropdown in the
-                        frontend
-                        where users manually choose source and target languages? This would eliminate the need for
-                        automatic
-                        language detection (googletrans dependency) and significantly reduce Docker image size.</div>
+                        frontend where users manually choose source and target languages? This would eliminate the need
+                        for automatic language detection (googletrans dependency) and significantly reduce Docker image
+                        size.</div>
                     <div class="question-impact"><strong>Impact:</strong> Docker image optimization, dependency
-                        reduction,
-                        user workflow simplicity, potential user errors from incorrect language selection</div>
+                        reduction, user workflow simplicity, potential user errors from incorrect language selection
+                    </div>
                 </div>
-
-
 
                 <div class="question-item">
                     <div class="question-title">User Base & Concurrent Usage Expectations</div>
                     <div class="question-desc">For normal prototype usage, we expect 1-2 concurrent users, but workshops
-                        and
-                        demonstrations could bring sudden spikes of 10-20+ simultaneous requests. Should we implement a
-                        queue-based processing system (similar to eScriptorium) to handle these peak loads gracefully,
-                        or
-                        rely on auto-scaling with potential wait times during demos?</div>
+                        and demonstrations could bring sudden spikes of 10-20+ simultaneous requests. Should we
+                        implement a queue-based processing system (similar to eScriptorium) to handle these peak loads
+                        gracefully, or rely on auto-scaling with potential wait times during demos?</div>
                     <div class="question-impact"><strong>Impact:</strong> User experience during demos, infrastructure
-                        costs
-                        during idle periods, system complexity, workshop planning requirements</div>
+                        costs during idle periods, system complexity, workshop planning requirements</div>
                 </div>
 
                 <div class="question-item">
-                    <div class="question-title">Data Storage</div>
+                    <div class="question-title">Data Storage & Privacy</div>
                     <div class="question-desc">What are the privacy requirements for handling potentially unpublished
                         academic texts or sensitive historical documents? Should we store textual data before and after
                         alignment to evaluate algorithm performance, or must all processing be ephemeral?</div>
                 </div>
+
+                <div class="question-item">
+                    <div class="question-title">Bertalign Parameter Configuration</div>
+                    <div class="question-desc">Should we expose Bertalign's configuration parameters (max_align, top_k,
+                        win, skip, margin, len_penalty) to users through the frontend interface, or define optimal
+                        default values internally? User control offers flexibility for different text types and
+                        languages, but increases interface complexity and requires parameter expertise.</div>
+                    <div class="question-impact"><strong>Impact:</strong> User interface complexity, alignment quality
+                        control, parameter expertise requirements, system predictability</div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-title">Frontend Segmentation Implementation</div>
+                    <div class="question-desc">With frontend-based segmentation decided, what are the implementation
+                        requirements? Which JavaScript tokenization libraries work best cross-linguistically? Should we
+                        use web workers for performance? How do we ensure consistent word/sentence boundaries across
+                        different languages and text types while maintaining TEI structure preservation?</div>
+                    <div class="question-impact"><strong>Impact:</strong> Frontend performance, linguistic accuracy,
+                        client-side resource requirements, cross-language compatibility</div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-title">Manual-Automatic Alignment Integration</div>
+                    <div class="question-desc">How should the system handle the transition between automatic and manual
+                        alignment modes? Should users be able to trigger automatic alignment after beginning manual
+                        corrections, and how do we merge or override existing manual alignments? What happens to user
+                        corrections when automatic alignment is re-run?</div>
+                    <div class="question-impact"><strong>Impact:</strong> User workflow design, data preservation
+                        strategy, alignment quality assurance, undo/redo functionality requirements</div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-title">TEI Format & Identifier Strategy</div>
+                    <div class="question-desc">Should the backend generate TEI documents that exactly match the
+                        frontend's manual alignment format (UUID identifiers, standOff structure, word-level markup)? Is
+                        the current TEI alignment schema considered final, or should we design for schema evolution? Are
+                        UUIDs the optimal identifier strategy considering document size vs. uniqueness trade-offs?</div>
+                    <div class="question-impact"><strong>Impact:</strong> Frontend-backend consistency, long-term
+                        compatibility, document file size, migration complexity</div>
+                </div>
             </div>
-        </div>
 
-        <script>
-            function highlightStep(element) {
-                // Remove previous highlights
-                document.querySelectorAll('.pipeline-step').forEach(step => {
-                    step.style.background = step.classList.contains('implemented') ? 'linear-gradient(135deg, #f8fff8, #e8f5e8)' :
-                        step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
-                            step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
-                    step.style.borderColor = step.classList.contains('implemented') ? '#28a745' :
-                        step.classList.contains('planned') ? '#007bff' :
-                            step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
+            <script>
+                function highlightStep(element) {
+                    // Remove previous highlights
+                    document.querySelectorAll('.pipeline-step').forEach(step => {
+                        step.style.background = step.classList.contains('implemented') ? 'linear-gradient(135deg, #f8fff8, #e8f5e8)' :
+                            step.classList.contains('planned') ? 'linear-gradient(135deg, #f0f8ff, #e3f2fd)' :
+                                step.classList.contains('optimization') ? 'linear-gradient(135deg, #fff5f5, #ffebee)' : 'white';
+                        step.style.borderColor = step.classList.contains('implemented') ? '#28a745' :
+                            step.classList.contains('planned') ? '#007bff' :
+                                step.classList.contains('optimization') ? '#dc3545' : '#dee2e6';
+                    });
+
+                    // Highlight clicked step
+                    element.style.background = 'linear-gradient(45deg, #fff3cd, #ffeaa7)';
+                    element.style.borderColor = '#ffc107';
+                    element.style.transform = 'scale(1.02)';
+
+                    setTimeout(() => {
+                        element.style.transform = 'translateY(-3px)';
+                    }, 200);
+                }
+
+                // Add interactive hover effects
+                document.querySelectorAll('.module').forEach(module => {
+                    module.addEventListener('mouseenter', () => {
+                        const status = module.classList.contains('optimization') ? 'optimization' :
+                            module.classList.contains('implemented') ? 'implemented' :
+                                module.classList.contains('in-progress') ? 'in-progress' : 'planned';
+
+                        const glowColors = {
+                            optimization: 'rgba(220, 53, 69, 0.2)',
+                            implemented: 'rgba(40, 167, 69, 0.2)',
+                            'in-progress': 'rgba(255, 193, 7, 0.2)',
+                            planned: 'rgba(0, 123, 255, 0.2)'
+                        };
+
+                        module.style.boxShadow = `0 4px 15px ${glowColors[status]}`;
+                    });
                 });
 
-                // Highlight clicked step
-                element.style.background = 'linear-gradient(45deg, #fff3cd, #ffeaa7)';
-                element.style.borderColor = '#ffc107';
-                element.style.transform = 'scale(1.02)';
-
-                setTimeout(() => {
-                    element.style.transform = 'translateY(-3px)';
-                }, 200);
-            }
-
-            // Add interactive hover effects
-            document.querySelectorAll('.module').forEach(module => {
-                module.addEventListener('mouseenter', () => {
-                    const status = module.classList.contains('optimization') ? 'optimization' :
-                        module.classList.contains('implemented') ? 'implemented' :
-                            module.classList.contains('in-progress') ? 'in-progress' : 'planned';
-
-                    const glowColors = {
-                        optimization: 'rgba(220, 53, 69, 0.2)',
-                        implemented: 'rgba(40, 167, 69, 0.2)',
-                        'in-progress': 'rgba(255, 193, 7, 0.2)',
-                        planned: 'rgba(0, 123, 255, 0.2)'
-                    };
-
-                    module.style.boxShadow = `0 4px 15px ${glowColors[status]}`;
+                // Pipeline step click tracking
+                document.querySelectorAll('.pipeline-step').forEach((step, index) => {
+                    step.addEventListener('click', () => {
+                        console.log(`Pipeline step ${index + 1} clicked:`, step.querySelector('.step-title').textContent);
+                    });
                 });
-            });
-
-            // Pipeline step click tracking
-            document.querySelectorAll('.pipeline-step').forEach((step, index) => {
-                step.addEventListener('click', () => {
-                    console.log(`Pipeline step ${index + 1} clicked:`, step.querySelector('.step-title').textContent);
-                });
-            });
-        </script>
+            </script>
 </body>
 
 </html>
