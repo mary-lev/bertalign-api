@@ -1,184 +1,388 @@
+"""
+API Endpoint Tests for Bertalign API.
+
+This module contains tests for all REST API endpoints including:
+- Health check
+- Basic text alignment 
+- TEI XML document alignment
+- Error handling and validation
+
+Organized into logical test classes for better structure.
+"""
+
 import pytest
 import time
 from fastapi.testclient import TestClient
 
 
-def test_health_endpoint(client):
-    """Test health check endpoint."""
-    response = client.get("/health")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "healthy"
-    assert "version" in data
+class TestHealthEndpoint:
+    """Tests for the health check endpoint."""
+    
+    def test_health_endpoint_success(self, client):
+        """Test health check endpoint returns healthy status."""
+        response = client.get("/health")
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["status"] == "healthy"
+        assert "version" in data
+        assert "model_loaded" in data
+
+    def test_root_endpoint_info(self, client):
+        """Test root endpoint returns API information."""
+        response = client.get("/")
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert "message" in data
+        assert "version" in data
+        assert "endpoints" in data
+        assert "supported_languages" in data
 
 
-def test_alignment_endpoint_basic(client, sample_request):
-    """Test basic alignment functionality."""
-    response = client.post("/align", json=sample_request)
-    assert response.status_code == 200
+class TestBasicAlignmentEndpoint:
+    """Tests for the basic text alignment endpoint."""
     
-    data = response.json()
-    assert "alignments" in data
-    assert "source_language" in data
-    assert "target_language" in data
-    assert "processing_time" in data
-    assert "total_source_sentences" in data
-    assert "total_target_sentences" in data
-    
-    # Check language detection
-    assert data["source_language"] == "English"
-    assert data["target_language"] == "French"
-    
-    # Check we got some alignments
-    assert len(data["alignments"]) > 0
+    def test_basic_alignment_success(self, client, basic_alignment_request):
+        """Test basic alignment functionality with valid input."""
+        response = client.post("/align", json=basic_alignment_request)
+        assert response.status_code == 200
+        
+        data = response.json()
+        
+        # Check required response fields
+        assert "alignments" in data
+        assert "source_language" in data
+        assert "target_language" in data
+        assert "processing_time" in data
+        assert "total_source_sentences" in data
+        assert "total_target_sentences" in data
+        assert "parameters" in data
+        
+        # Check language codes are returned correctly
+        assert data["source_language"] == "en"
+        assert data["target_language"] == "fr"
+        
+        # Check we got alignments
+        assert len(data["alignments"]) > 0
+        
+        # Check alignment structure
+        alignment = data["alignments"][0]
+        assert "source_sentences" in alignment
+        assert "target_sentences" in alignment
+        assert "alignment_score" in alignment
+        assert "source_indices" in alignment
+        assert "target_indices" in alignment
+        
+        # Check score is valid
+        assert 0.0 <= alignment["alignment_score"] <= 1.0
+
+    def test_multiple_language_pairs(self, client, multilanguage_test_cases):
+        """Test alignment with different language pairs."""
+        for test_case in multilanguage_test_cases:
+            response = client.post("/align", json={
+                "source_text": test_case["source_text"],
+                "target_text": test_case["target_text"],
+                "source_language": test_case["source_language"],
+                "target_language": test_case["target_language"]
+            })
+            assert response.status_code == 200, f"Failed for {test_case['description']}"
+            
+            data = response.json()
+            assert data["source_language"] == test_case["source_language"]
+            assert data["target_language"] == test_case["target_language"]
+
+    def test_pre_split_sentences(self, client, pre_split_request):
+        """Test alignment with pre-split sentences."""
+        response = client.post("/align", json=pre_split_request)
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["total_source_sentences"] == 2
+        assert data["total_target_sentences"] == 2
+        assert data["parameters"]["is_split"] is True
+
+    def test_custom_parameters(self, client, basic_alignment_request):
+        """Test alignment with custom parameters."""
+        custom_request = {
+            **basic_alignment_request,
+            "max_align": 3,
+            "top_k": 5,
+            "win": 10,
+            "skip": -0.2,
+            "margin": False,
+            "len_penalty": False
+        }
+        
+        response = client.post("/align", json=custom_request)
+        assert response.status_code == 200
+        
+        data = response.json()
+        params = data["parameters"]
+        assert params["max_align"] == 3
+        assert params["top_k"] == 5
+        assert params["win"] == 10
+        assert params["skip"] == -0.2
+        assert params["margin"] is False
+        assert params["len_penalty"] is False
+
+    def test_performance_timing(self, client, medium_alignment_request):
+        """Test alignment performance with medium-sized text."""
+        start_time = time.time()
+        response = client.post("/align", json=medium_alignment_request)
+        end_time = time.time()
+        
+        assert response.status_code == 200
+        
+        # Should complete within reasonable time
+        assert end_time - start_time < 5.0  # 5 seconds max
+        
+        data = response.json()
+        # Processing time should be reported and reasonable
+        assert data["processing_time"] > 0
+        assert data["processing_time"] < 5.0
 
 
-def test_alignment_endpoint_different_languages(client):
-    """Test alignment with different language pairs."""
-    test_cases = [
-        ("en", "de", "Hello world.", "Hallo Welt."),
-        ("en", "es", "Hello world.", "Hola mundo."),
-        ("fr", "en", "Bonjour le monde.", "Hello world.")
-    ]
+class TestBasicAlignmentValidation:
+    """Tests for input validation on basic alignment endpoint."""
     
-    for src_lang, tgt_lang, src_text, tgt_text in test_cases:
+    def test_missing_required_fields(self, client):
+        """Test alignment endpoint with missing required fields."""
+        response = client.post("/align", json={})
+        assert response.status_code == 422
+    
+    def test_invalid_language_codes(self, client):
+        """Test alignment endpoint with invalid language codes."""
+        invalid_request = {
+            "source_text": "Hello world.",
+            "target_text": "Bonjour le monde.",
+            "source_language": "invalid",
+            "target_language": "fr"
+        }
+        response = client.post("/align", json=invalid_request)
+        assert response.status_code == 422
+        
+        # Test invalid target language
+        invalid_request = {
+            "source_text": "Hello world.",
+            "target_text": "Bonjour le monde.",
+            "source_language": "en",
+            "target_language": "invalid"
+        }
+        response = client.post("/align", json=invalid_request)
+        assert response.status_code == 422
+
+    def test_empty_text(self, client):
+        """Test alignment endpoint with empty text."""
+        empty_request = {
+            "source_text": "",
+            "target_text": "Bonjour le monde.",
+            "source_language": "en",
+            "target_language": "fr"
+        }
+        response = client.post("/align", json=empty_request)
+        assert response.status_code == 422
+        
+        # Test whitespace only
+        whitespace_request = {
+            "source_text": "   ",
+            "target_text": "Bonjour le monde.",
+            "source_language": "en",
+            "target_language": "fr"
+        }
+        response = client.post("/align", json=whitespace_request)
+        assert response.status_code == 422
+
+    def test_parameter_boundaries(self, client, basic_alignment_request):
+        """Test parameter validation boundaries."""
+        # Test max_align too high
+        invalid_request = {
+            **basic_alignment_request,
+            "max_align": 15  # Above limit of 10
+        }
+        response = client.post("/align", json=invalid_request)
+        assert response.status_code == 422
+        
+        # Test skip penalty out of range
+        invalid_request = {
+            **basic_alignment_request,
+            "skip": 0.5  # Should be negative
+        }
+        response = client.post("/align", json=invalid_request)
+        assert response.status_code == 422
+
+
+class TestTEIAlignmentEndpoint:
+    """Tests for the TEI XML document alignment endpoint."""
+    
+    def test_tei_alignment_success(self, client, basic_tei_request):
+        """Test TEI alignment with valid documents."""
+        response = client.post("/align/tei", json=basic_tei_request)
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert "aligned_xml" in data
+        assert "source_language" in data
+        assert "target_language" in data
+        assert "alignment_count" in data
+        assert "processing_time" in data
+        
+        # Check languages match request
+        assert data["source_language"] == "it"
+        assert data["target_language"] == "en"
+        
+        # Check alignment count is reasonable
+        assert data["alignment_count"] >= 0
+        assert data["processing_time"] > 0
+        
+        # Check aligned XML contains standOff structure
+        aligned_xml = data["aligned_xml"]
+        assert "<standOff>" in aligned_xml
+        assert "<linkGrp" in aligned_xml
+
+    def test_tei_explicit_language_override(self, client, simple_italian_tei, simple_english_tei):
+        """Test TEI alignment with explicit language parameters override TEI metadata."""
+        # TEI with different language in metadata than what we specify
+        request_data = {
+            "source_tei": simple_italian_tei.replace('ident="it"', 'ident="unknown"'),
+            "target_tei": simple_english_tei.replace('ident="en"', 'ident="unknown"'),
+            "source_language": "it",
+            "target_language": "en"
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 200
+        
+        data = response.json()
+        # Should use our explicit languages, not "unknown" from metadata
+        assert data["source_language"] == "it"
+        assert data["target_language"] == "en"
+
+    def test_tei_custom_parameters(self, client, basic_tei_request):
+        """Test TEI alignment with custom alignment parameters."""
+        custom_request = {
+            **basic_tei_request,
+            "max_align": 3,
+            "top_k": 2,
+            "win": 3
+        }
+        
+        response = client.post("/align/tei", json=custom_request)
+        assert response.status_code == 200
+
+
+class TestTEIAlignmentValidation:
+    """Tests for input validation on TEI alignment endpoint."""
+    
+    def test_invalid_tei_xml(self, client):
+        """Test TEI alignment endpoint with invalid XML."""
+        request_data = {
+            "source_tei": "<invalid>xml",
+            "target_tei": "also invalid",
+            "source_language": "en",
+            "target_language": "fr"
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 400
+
+    def test_missing_tei_language_parameters(self, client, simple_italian_tei, simple_english_tei):
+        """Test TEI alignment endpoint with missing language parameters."""
+        request_data = {
+            "source_tei": simple_italian_tei,
+            "target_tei": simple_english_tei
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 422
+
+    def test_invalid_tei_language_codes(self, client, simple_italian_tei, simple_english_tei):
+        """Test TEI alignment with invalid language codes."""
+        # Test invalid source language
+        request_data = {
+            "source_tei": simple_italian_tei,
+            "target_tei": simple_english_tei,
+            "source_language": "invalid",
+            "target_language": "en"
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 422
+        
+        # Test invalid target language
+        request_data = {
+            "source_tei": simple_italian_tei,
+            "target_tei": simple_english_tei,
+            "source_language": "it",
+            "target_language": "invalid"
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 422
+
+
+class TestAPIDocumentation:
+    """Tests for API documentation endpoints."""
+    
+    def test_openapi_docs_accessible(self, client):
+        """Test that OpenAPI documentation is accessible."""
+        response = client.get("/docs")
+        assert response.status_code == 200
+        
+        response = client.get("/redoc")
+        assert response.status_code == 200
+        
+        response = client.get("/openapi.json")
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert "openapi" in data
+        assert "paths" in data
+        assert "/align" in data["paths"]
+        assert "/align/tei" in data["paths"]
+
+
+class TestEdgeCases:
+    """Tests for edge cases and boundary conditions."""
+    
+    def test_single_sentence_alignment(self, client):
+        """Test alignment with single sentences."""
         request = {
-            "source_text": src_text,
-            "target_text": tgt_text,
-            "source_language": src_lang,
-            "target_language": tgt_lang
+            "source_text": "Hello world.",
+            "target_text": "Bonjour le monde.",
+            "source_language": "en",
+            "target_language": "fr"
         }
         response = client.post("/align", json=request)
-        assert response.status_code == 200, f"Failed for {src_lang}->{tgt_lang}"
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["total_source_sentences"] == 1
+        assert data["total_target_sentences"] == 1
 
+    def test_very_short_text(self, client):
+        """Test alignment with very short text."""
+        request = {
+            "source_text": "Hi.",
+            "target_text": "Bonjour.",
+            "source_language": "en",
+            "target_language": "fr"
+        }
+        response = client.post("/align", json=request)
+        assert response.status_code == 200
 
-def test_alignment_endpoint_custom_parameters(client, sample_request):
-    """Test alignment with custom parameters."""
-    custom_request = {
-        **sample_request,
-        "max_align": 3,
-        "top_k": 5,
-        "win": 10,
-        "skip": -0.2,
-        "margin": False,
-        "len_penalty": False
-    }
-    
-    response = client.post("/align", json=custom_request)
-    assert response.status_code == 200
-    
-    data = response.json()
-    # Check that custom parameters are returned
-    params = data["parameters"]
-    assert params["max_align"] == 3
-    assert params["top_k"] == 5
-    assert params["win"] == 10
-
-
-def test_alignment_endpoint_pre_split(client):
-    """Test alignment with pre-split sentences."""
-    request = {
-        "source_text": "Hello world.\nThis is a test.",
-        "target_text": "Bonjour le monde.\nCeci est un test.",
-        "source_language": "en",
-        "target_language": "fr",
-        "is_split": True
-    }
-    
-    response = client.post("/align", json=request)
-    assert response.status_code == 200
-    
-    data = response.json()
-    assert data["total_source_sentences"] == 2
-    assert data["total_target_sentences"] == 2
-
-
-def test_alignment_endpoint_performance(client, sample_request_large):
-    """Test alignment performance with larger text."""
-    start_time = time.time()
-    response = client.post("/align", json=sample_request_large)
-    end_time = time.time()
-    
-    assert response.status_code == 200
-    
-    # Should complete within reasonable time
-    assert end_time - start_time < 5.0  # 5 seconds max
-    
-    data = response.json()
-    # Processing time should be reported
-    assert data["processing_time"] > 0
-    assert data["processing_time"] < 5.0
-
-
-def test_alignment_endpoint_invalid_request(client):
-    """Test alignment endpoint with invalid requests."""
-    # Missing required fields
-    response = client.post("/align", json={})
-    assert response.status_code == 422
-    
-    # Invalid language
-    invalid_request = {
-        "source_text": "Hello world.",
-        "target_text": "Bonjour le monde.",
-        "source_language": "invalid",
-        "target_language": "fr"
-    }
-    response = client.post("/align", json=invalid_request)
-    assert response.status_code == 422
-    
-    # Empty text
-    empty_request = {
-        "source_text": "",
-        "target_text": "Bonjour le monde.",
-        "source_language": "en",
-        "target_language": "fr"
-    }
-    response = client.post("/align", json=empty_request)
-    assert response.status_code == 422
-
-
-def test_alignment_endpoint_edge_cases(client):
-    """Test alignment with edge cases."""
-    # Single sentence
-    single_request = {
-        "source_text": "Hello world.",
-        "target_text": "Bonjour le monde.",
-        "source_language": "en",
-        "target_language": "fr"
-    }
-    response = client.post("/align", json=single_request)
-    assert response.status_code == 200
-    
-    # Very short text
-    short_request = {
-        "source_text": "Hi.",
-        "target_text": "Bonjour.",
-        "source_language": "en",
-        "target_language": "fr"
-    }
-    response = client.post("/align", json=short_request)
-    assert response.status_code == 200
-    
-    # Mismatched sentence counts
-    mismatch_request = {
-        "source_text": "Hello. World. Test.",
-        "target_text": "Bonjour le monde.",
-        "source_language": "en",
-        "target_language": "fr"
-    }
-    response = client.post("/align", json=mismatch_request)
-    assert response.status_code == 200
-
-
-def test_openapi_docs(client):
-    """Test that OpenAPI documentation is accessible."""
-    response = client.get("/docs")
-    assert response.status_code == 200
-    
-    response = client.get("/openapi.json")
-    assert response.status_code == 200
-    
-    data = response.json()
-    assert "openapi" in data
-    assert "paths" in data
-    assert "/align" in data["paths"]
+    def test_mismatched_sentence_counts(self, client):
+        """Test alignment with mismatched sentence counts."""
+        request = {
+            "source_text": "Hello. World. Test.",
+            "target_text": "Bonjour le monde.",
+            "source_language": "en",
+            "target_language": "fr"
+        }
+        response = client.post("/align", json=request)
+        assert response.status_code == 200
+        
+        data = response.json()
+        # Should handle mismatched counts gracefully
+        assert data["total_source_sentences"] != data["total_target_sentences"]
+        assert len(data["alignments"]) > 0

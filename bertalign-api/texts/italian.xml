@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model
+  href="https://vault.tei-c.org/P5/current/xml/tei/custom/schema/relaxng/tei_all.rng"
+  schematypens="http://relaxng.org/ns/structure/1.0"
+  type="application/xml"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0"> 
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Contributi alla teoria figurativa della forma</title>
+                <author>P. Klee</author>
+            </titleStmt>
+            <publicationStmt> 
+                <publisher>Istituto Italiano di Studi Germanici</publisher>
+                <pubPlace>Roma</pubPlace>
+                <date>2025</date>
+            </publicationStmt>
+            <sourceDesc>
+                <bibl>
+                    <respStmt><resp>Traduzione a cura di</resp><name>Hansmichael Hohenegger</name><name>C. Miglio</name></respStmt>
+                    <respStmt><resp>Responsabilità scientifica di</resp><name>Tiziana Mancinelli</name></respStmt>
+                    <respStmt><resp>Coordinamento a cura di</resp><name>Eleonora De Longis</name></respStmt>
+                </bibl>
+            </sourceDesc>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <div xml:id="div_Klee_introduction">
+                <pb/>
+                <head type="main">A Lezioni del semestre invernale 1921-1922</head>
+                <head type="subtype"><date>14 novembre 1921</date></head> 
+                    <p>
+                        Come introduzione un breve chiarimento concettuale. In
+                        primo luogo ciò che è contenuto nel concetto di analisi. Nel
+                        linguaggio comune si sente per lo più parlare delle analisi dei 
+                        chimici. Un certo preparato, per esempio, ha grande smer-
+                        cio per la sua azione eccellente.I buoni affari del produtto-
+                        re di questo preparato incuriosiscono gli altri produttori, che
+                        ne portano un campione al chimico, in modo che lo analizzi.
+                        Il chimico deve procedere metodicamente per scomporre il 
+                        preparato nei suoi componenti. Sciogliere l’enigma.
+                    </p>
+                    <p>
+                        In un altro caso un alimento ha conseguenze dannose per 
+                        la salute. Anche in questo caso deve intervenire il chimico, 
+                        per evidenziare con chiarezza, mediante l’analisi, i compo-
+                        nenti nocivi. In entrambi i casi il dato è un tutto costituito da 
+                        diverse parti che sono dapprima sconosciute;
+                    </p>
+                <pb/>
+                    <p>
+                        ciò che è cercato sono i componenti.
+                    </p>
+                    <p>
+                        Nella nostra attività i motivi e le ragioni per analizzare 
+                        qualcosa, naturalmente, sono diversi. Non facciamo analisi né 
+                        di opere che vorremmo copiare, né di quelle che non ci con-
+                        vincono.
+                    </p>
+                    <p>
+                        Noi ricerchiamo le vie che qualcun altro ha percorso nella 
+                        creazione della propria opera, affinché, conoscendole, ci si 
+                        metta su un proprio cammino. Questo tipo di considerazio-
+                        ne deve preservarci dal concepire l’opera come qualcosa di 
+                        rigido, invariabilmente stabilito. Grazie a queste esercitazio-
+                        ni dovremmo poterci preservare dall’atteggiamento di chi si 
+                        avvicina di soppiatto al risultato dell’opera, per coglierne in
+                        tutta fretta ciò che è immediatamente a portata di mano, e 
+                        con questo bottino scappare via.
+                    </p>
+                <pb/> 
+                    <p>
+                        È un peculiare tipo di analisi [3] quella che consiste nell’inda-
+                        gare l’opera a partire dagli stadi del suo sorgere. Ho scelto per 
+                        questo tipo di analisi la parola genesi. Anche il primo libro di 
+                        Mosè, che si occupa della creazione del mondo, si chiama il 
+                        Genesi. Vi è scritto: il primo giorno Dio creò, il secondo giorno, 
+                        e così via. Il mondo che ci circonda è articolato storicamente.
+                    </p>
+                    <p>
+                        Noi siamo artisti della figurazione (Bildner), la nostra
+                        azione è quella di produrre opere, ci muoveremo quindi natu-
+                        ralmente in ambito soprattutto formale. Senza per ciò dimen-
+                        ticare che prima dell’inizio formale, o, più semplicemente, 
+                        prima del primo tratto di matita, c’è un’intera preistoria, che
+                        non è però solo il desiderio di espressione, il piacere che gli 
+                        uomini ne ricavano, non si riduce alla necessità esteriore di 
+                        esprimersi, ma è anche uno stato universale dell’umanità, la 
+                        cui direzione è detta visione del mondo [Weltanschauung], 
+                        stato che con interna necessità ora qui ora là preme per ma-
+                        nifestarsi.
+                    </p>
+                <pb/> 
+                    <p>
+                        Sottolineo questo punto affinché non sorga il malinteso 
+                        per cui l’opera consisterebbe esclusivamente di forma.
+                    </p>
+                    <p>
+                        Ma, per altro verso, devo sottolineare con maggior forza 
+                        che non ci serve a nulla la più precisa e scientifica conoscenza 
+                        della natura delle piante, degli animali, della terra e della sua 
+                        storia, delle stelle, se non abbiamo tutta l’attrezzatura neces-
+                        saria per la sua rappresentazione. Che non ci serve a nulla la 
+                        più spirituale concezione dell’armonia di queste cose nell’uni-
+                        verso, se non siamo anche, secondo la direzione di quello sta-
+                        to dell’umanità, attrezzati di forme. Che non ci serve a nulla
+                        l’animo più profondo, l’anima più bella, se non abbiamo a di-
+                        sposizione le forme a ciò appropriate.
+                    </p>
+                    <p>
+                        Per noi si tratta di rinunciare al colpo di fortuna isolato 
+                        che può portare onore per una volta al dilettante con un ope-
+                        re riuscita [, e a noi forse disonore passeggero], e che come 
+                        caso singolo può perfino essere tale da mettere in imbarazzo 
+                        un professionista.
+                    </p>
+                <pb/> 
+                    <p>
+                        Fatte queste premesse generali, inizio proprio dove inizia 
+                        la forma figurativa: dal punto che si mette in movimento.
+                    </p>
+            </div>
+        </body>
+    </text>
+</TEI>

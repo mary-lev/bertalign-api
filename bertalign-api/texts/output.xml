@@ -1,0 +1,280 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" version="3.3.0">
+ <teiHeader>
+  <fileDesc>
+   <titleStmt>
+    <title/>
+   </titleStmt>
+   <publicationStmt><p/></publicationStmt>
+  </fileDesc>
+ </teiHeader>
+ <standOff><linkGrp type="translation">
+    <link target="#72f38fc9-2c66-4e03-ac44-b1fdc25617a2 #d6fea329-3d32-49f2-8966-ccdfdf3065ff" type="Linguistic"/>
+</linkGrp></standOff>
+<TEI xmlns="http://www.tei-c.org/ns/1.0"> 
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Contributi alla teoria figurativa della forma</title>
+                <author>P. Klee</author>
+            </titleStmt>
+            <publicationStmt> 
+                <publisher>Istituto Italiano di Studi Germanici</publisher>
+                <pubPlace>Roma</pubPlace>
+                <date>2025</date>
+            </publicationStmt>
+            <sourceDesc>
+                <bibl>
+                    <respStmt><resp>Traduzione a cura di</resp><name>Hansmichael Hohenegger</name><name>C. Miglio</name></respStmt>
+                    <respStmt><resp>Responsabilità scientifica di</resp><name>Tiziana Mancinelli</name></respStmt>
+                    <respStmt><resp>Coordinamento a cura di</resp><name>Eleonora De Longis</name></respStmt>
+                </bibl>
+            </sourceDesc>
+        </fileDesc>
+    <profileDesc><langUsage><language ident="it">it</language></langUsage></profileDesc></teiHeader>
+    <text>
+        <body>
+            <div xml:id="div_Klee_introduction">
+                <pb/>
+                <head type="main">A Lezioni del semestre invernale 1921-1922</head>
+                <head type="subtype"><date>14 novembre 1921</date></head> 
+                    <p xml:id="72f38fc9-2c66-4e03-ac44-b1fdc25617a2">
+                        Come introduzione un breve chiarimento concettuale. In
+                        primo luogo ciò che è contenuto nel concetto di analisi. Nel
+                        linguaggio comune si sente per lo più parlare delle analisi dei 
+                        chimici. Un certo preparato, per esempio, ha grande smer-
+                        cio per la sua azione eccellente.I buoni affari del produtto-
+                        re di questo preparato incuriosiscono gli altri produttori, che
+                        ne portano un campione al chimico, in modo che lo analizzi.
+                        Il chimico deve procedere metodicamente per scomporre il 
+                        preparato nei suoi componenti. Sciogliere l’enigma.
+                    </p>
+                    <p>
+                        In un altro caso un alimento ha conseguenze dannose per 
+                        la salute. Anche in questo caso deve intervenire il chimico, 
+                        per evidenziare con chiarezza, mediante l’analisi, i compo-
+                        nenti nocivi. In entrambi i casi il dato è un tutto costituito da 
+                        diverse parti che sono dapprima sconosciute;
+                    </p>
+                <pb/>
+                    <p>
+                        ciò che è cercato sono i componenti.
+                    </p>
+                    <p>
+                        Nella nostra attività i motivi e le ragioni per analizzare 
+                        qualcosa, naturalmente, sono diversi. Non facciamo analisi né 
+                        di opere che vorremmo copiare, né di quelle che non ci con-
+                        vincono.
+                    </p>
+                    <p>
+                        Noi ricerchiamo le vie che qualcun altro ha percorso nella 
+                        creazione della propria opera, affinché, conoscendole, ci si 
+                        metta su un proprio cammino. Questo tipo di considerazio-
+                        ne deve preservarci dal concepire l’opera come qualcosa di 
+                        rigido, invariabilmente stabilito. Grazie a queste esercitazio-
+                        ni dovremmo poterci preservare dall’atteggiamento di chi si 
+                        avvicina di soppiatto al risultato dell’opera, per coglierne in
+                        tutta fretta ciò che è immediatamente a portata di mano, e 
+                        con questo bottino scappare via.
+                    </p>
+                <pb/> 
+                    <p>
+                        È un peculiare tipo di analisi [3] quella che consiste nell’inda-
+                        gare l’opera a partire dagli stadi del suo sorgere. Ho scelto per 
+                        questo tipo di analisi la parola genesi. Anche il primo libro di 
+                        Mosè, che si occupa della creazione del mondo, si chiama il 
+                        Genesi. Vi è scritto: il primo giorno Dio creò, il secondo giorno, 
+                        e così via. Il mondo che ci circonda è articolato storicamente.
+                    </p>
+                    <p>
+                        Noi siamo artisti della figurazione (Bildner), la nostra
+                        azione è quella di produrre opere, ci muoveremo quindi natu-
+                        ralmente in ambito soprattutto formale. Senza per ciò dimen-
+                        ticare che prima dell’inizio formale, o, più semplicemente, 
+                        prima del primo tratto di matita, c’è un’intera preistoria, che
+                        non è però solo il desiderio di espressione, il piacere che gli 
+                        uomini ne ricavano, non si riduce alla necessità esteriore di 
+                        esprimersi, ma è anche uno stato universale dell’umanità, la 
+                        cui direzione è detta visione del mondo [Weltanschauung], 
+                        stato che con interna necessità ora qui ora là preme per ma-
+                        nifestarsi.
+                    </p>
+                <pb/> 
+                    <p>
+                        Sottolineo questo punto affinché non sorga il malinteso 
+                        per cui l’opera consisterebbe esclusivamente di forma.
+                    </p>
+                    <p>
+                        Ma, per altro verso, devo sottolineare con maggior forza 
+                        che non ci serve a nulla la più precisa e scientifica conoscenza 
+                        della natura delle piante, degli animali, della terra e della sua 
+                        storia, delle stelle, se non abbiamo tutta l’attrezzatura neces-
+                        saria per la sua rappresentazione. Che non ci serve a nulla la 
+                        più spirituale concezione dell’armonia di queste cose nell’uni-
+                        verso, se non siamo anche, secondo la direzione di quello sta-
+                        to dell’umanità, attrezzati di forme. Che non ci serve a nulla
+                        l’animo più profondo, l’anima più bella, se non abbiamo a di-
+                        sposizione le forme a ciò appropriate.
+                    </p>
+                    <p>
+                        Per noi si tratta di rinunciare al colpo di fortuna isolato 
+                        che può portare onore per una volta al dilettante con un ope-
+                        re riuscita [, e a noi forse disonore passeggero], e che come 
+                        caso singolo può perfino essere tale da mettere in imbarazzo 
+                        un professionista.
+                    </p>
+                <pb/> 
+                    <p>
+                        Fatte queste premesse generali, inizio proprio dove inizia 
+                        la forma figurativa: dal punto che si mette in movimento.
+                    </p>
+            </div>
+        </body>
+    </text>
+<facsimile/></TEI><TEI xmlns="http://www.tei-c.org/ns/1.0"> 
+   <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>Contributions to the Theory of Pictorial Form.</title>
+                <author>P. Klee</author>
+            </titleStmt>
+            <publicationStmt> 
+                <publisher>Istituto Italiano di Studi Germanici</publisher>
+                <pubPlace>Rome</pubPlace>
+                <date>2025</date>
+            </publicationStmt>
+            <sourceDesc>
+                <bibl>
+                    <respStmt><resp>Translated by</resp><name/></respStmt>
+                    <respStmt><resp>Scientific responsability of</resp><name>Tiziana Mancinelli</name></respStmt>
+                    <respStmt><resp>Coordinated by</resp><name>Eleonora De Longis</name></respStmt>
+                </bibl>
+            </sourceDesc>
+        </fileDesc>
+    <profileDesc><langUsage><language ident="en">en</language></langUsage></profileDesc></teiHeader>
+    <text>
+        <body>
+            <div xml:id="div_Klee_introduction">
+                <pb/>
+                <head type="main">A. Winter semester lectures 1921-1922 <date>Nov. 14, 1921</date></head>
+                    <p xml:id="d6fea329-3d32-49f2-8966-ccdfdf3065ff">
+                       By way of introduction, a brief clarifi-
+                       cation of concepts. First, what the concept 
+                       of "analysis" encompasses: In ordinary con-
+                       versation one usually hears mention of 
+                       chemists' analyses. For instance, a certain 
+                       preparation sells well due to its excellent 
+                       effect. The manufacturer's profits make 
+                       other manufacturers curious, and they 
+                       take a sample of it to the chemist so 
+                       that he can analyze it. He must proceed 
+                       methodically in order to break the prepa-
+                       ration down into its component parts. To 
+                       solve the riddle.
+                    </p>
+                    <p>
+                       In another case, a stimulant proves to have 
+                       grave consequences for health. Here also the 
+                       chemist must be called upon to reveal the 
+                       harmful components through an analysis.
+                    </p>
+                    <p>
+                       In both cases the given substance is a 
+                       whole composed of different, initially unknown
+                    </p>
+                <pb/> 
+                    <p>
+                       parts; the components are what is sought after.
+                    </p>
+                    <p>
+                       In our business, the motives or 
+                       inducements that lead us to make analyses 
+                       are of course different. We do not analyze 
+                       works that we would like to copy, nor works 
+                       we have reason to distrust.
+                    </p>
+                    <p>
+                       We investigate the paths that 
+                       another has followed in the creation of 
+                       a work in order, by becoming familiar 
+                       with these paths, to get going ourselves.
+                       This type of examination should prevent 
+                       us from regarding the work as something 
+                       rigid, immutably fixed. By means of such 
+                       exercises we can prevent ourselves from 
+                       sneaking up on a finished work only to 
+                       quickly pluck up what stands out the 
+                       most and run off with it.
+                    </p>
+                    <p>
+                       A special type of analysis is the
+                    </p>
+                <pb/> 
+                    <p>
+                       examination of the work through the stages 
+                       of its emergence. I designate this type with 
+                       the word "genesis." The first book of Moses, 
+                       which deals with the creation of the world, 
+                       is also called Genesis. There it is written 
+                       what God created on the first day, what 
+                       on the second, and so forth. The universe 
+                       surrounding us undergoes a historical 
+                       articulation.
+                    </p>
+                    <p>
+                       We are makers, working practitioners, 
+                       and hence it is natural that here we shall 
+                       move chiefly in a formal domain, all the 
+                       while not forgetting that before the formal 
+                       beginning, or (put more simply) before the 
+                       first stroke, lies an entire prehistory: not 
+                       only, say, the yearning, the human desire 
+                       to express oneself, not only the outward 
+                       necessity to do so, but also a general human 
+                       condition, whose orientation is called a 
+                       weltanschauung, which, with an inner necessity,
+                    </p>
+                <pb/> 
+                    <p>
+                       urges its manifestation in this or that 
+                       direction.
+                    </p>
+                    <p>
+                       I emphasize this lest the misunder-
+                       standing arise that a work consists only 
+                       of form.
+                    </p>
+                    <p>
+                       But on the other hand, I must empha-
+                       size here even more that the most precise 
+                       scientific knowledge of nature, plants, 
+                       animals, the earth and its history, or 
+                       of the stars is useless to us if we are 
+                       not provided with all the tools for their 
+                       representation; that the profoundest 
+                       understanding of the synergy of these 
+                       things in the universe is of no use to 
+                       us if we are not also equipped with forms 
+                       directed towards that purpose; that the 
+                       deepest feeling, the most beautiful soul, 
+                       is useless unless we have the proper forms 
+                       at hand.
+                    </p>
+                    <p>
+                       <s part="I"> Here it means renouncing the excep-
+                       tional fluke that on occasion earns the 
+                       dilettante honor with a successful work that</s>
+                    </p>
+                <pb/> 
+                    <p>
+                       After these general premises, I shall 
+                       begin where the pictorial form actually 
+                       begins, with the point that sets itself 
+                       in motion.
+                    </p>
+                    <p>
+                        <s part="F">can, as an isolated case, shame the professionals.</s>
+                    </p>
+            </div>
+        </body>
+    </text>
+<facsimile/></TEI></TEI>

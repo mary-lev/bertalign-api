@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns:ns0="http://www.tei-c.org/ns/1.0" xmlns="http://www.tei-c.org/ns/1.0" version="3.3.0"><teiHeader><fileDesc><titleStmt><title>Aligned: Contributi alla teoria figurativa della forma - Contributions to the Theory of Pictorial Form.</title></titleStmt><publicationStmt><p /></publicationStmt></fileDesc></teiHeader><standOff><linkGrp type="translation"><link target="#0a547c97-2b4e-4bef-a915-9cdc3bc0a99c #5e08d8b7-b9b9-47e8-aeb0-7ecb6a2e92e4" type="Linguistic" /><link target="#70fbb1fa-1003-4c64-9614-c55bb42b757a #6d9e75ba-e687-4ede-bedf-71221fe689dd" type="Linguistic" /><link target="#79d8961c-c107-437f-b361-834536e1acd5 #29bdab67-7599-4598-8f36-87827561417e" type="Linguistic" /><link target="#130deb26-f597-4500-b303-b0ea8ed5a6dc #f143e5f6-0d97-42f2-abf0-a50f7e57c901" type="Linguistic" /><link target="#14da70da-14c6-4c44-a266-e7e275bdf237 #a9e510aa-f2fa-440d-a87e-a8ea2dc270c7" type="Linguistic" /><link target="#8acf85c2-7c25-40d3-98b4-f5296d5fdfa9 #d39c9f8d-0ca6-48cb-b2af-d3f117db84a3" type="Linguistic" /><link target="#16319519-3673-459c-8bb9-884c9da7bbd3 #875ff802-5808-4fed-ad61-3d4ffb977fcc" type="Linguistic" /><link target="#75b78aef-6313-4fc5-b449-6bc044616ab1 #9e2c4e6b-de05-4312-942a-7bd5d5b638f1" type="Linguistic" /><link target="#70fb581f-8ec9-4c18-b02c-0154f0b0f76b #e8efe403-29ab-4408-9d80-0d38a1bfe94f" type="Linguistic" /><link target="#6c19b516-6879-49df-9066-321ebd849c0f #b24062c8-1e3e-4b78-bc8a-36d01e742d65" type="Linguistic" /><link target="#dd2d597a-fa9b-4053-8b33-eb4f7633b4bb #75fd2d5b-fef3-49a1-a636-6d9cdfcfbd06" type="Linguistic" /><link target="#faf18e38-9215-4175-884f-762bb58d1beb #59337d0b-2915-4d41-a032-754a6e29b62d" type="Linguistic" /><link target="#57be846f-bb7d-4b14-8734-efcfa7412bca #0a42f2a2-a86e-4dc7-9cf9-798652b743b0" type="Linguistic" /></linkGrp></standOff><ns0:TEI> 
+    <ns0:teiHeader>
+        <ns0:fileDesc>
+            <ns0:titleStmt>
+                <ns0:title>Contributi alla teoria figurativa della forma</ns0:title>
+                <ns0:author>P. Klee</ns0:author>
+            </ns0:titleStmt>
+            <ns0:publicationStmt> 
+                <ns0:publisher>Istituto Italiano di Studi Germanici</ns0:publisher>
+                <ns0:pubPlace>Roma</ns0:pubPlace>
+                <ns0:date>2025</ns0:date>
+            </ns0:publicationStmt>
+            <ns0:sourceDesc>
+                <ns0:bibl>
+                    <ns0:respStmt><ns0:resp>Traduzione a cura di</ns0:resp><ns0:name>Hansmichael Hohenegger</ns0:name><ns0:name>C. Miglio</ns0:name></ns0:respStmt>
+                    <ns0:respStmt><ns0:resp>Responsabilità scientifica di</ns0:resp><ns0:name>Tiziana Mancinelli</ns0:name></ns0:respStmt>
+                    <ns0:respStmt><ns0:resp>Coordinamento a cura di</ns0:resp><ns0:name>Eleonora De Longis</ns0:name></ns0:respStmt>
+                </ns0:bibl>
+            </ns0:sourceDesc>
+        </ns0:fileDesc>
+    <profileDesc><langUsage><language ident="it">it</language></langUsage></profileDesc></ns0:teiHeader>
+    <ns0:text>
+        <ns0:body>
+            <ns0:div xml:id="div_Klee_introduction">
+                <ns0:pb />
+                <ns0:head type="main" xml:id="0a547c97-2b4e-4bef-a915-9cdc3bc0a99c">A Lezioni del semestre invernale 1921-1922</ns0:head>
+                <ns0:head type="subtype" xml:id="70fbb1fa-1003-4c64-9614-c55bb42b757a"><ns0:date>14 novembre 1921</ns0:date></ns0:head> 
+                    <ns0:p xml:id="79d8961c-c107-437f-b361-834536e1acd5">
+                        Come introduzione un breve chiarimento concettuale. In
+                        primo luogo ciò che è contenuto nel concetto di analisi. Nel
+                        linguaggio comune si sente per lo più parlare delle analisi dei 
+                        chimici. Un certo preparato, per esempio, ha grande smer-
+                        cio per la sua azione eccellente.I buoni affari del produtto-
+                        re di questo preparato incuriosiscono gli altri produttori, che
+                        ne portano un campione al chimico, in modo che lo analizzi.
+                        Il chimico deve procedere metodicamente per scomporre il 
+                        preparato nei suoi componenti. Sciogliere l’enigma.
+                    </ns0:p>
+                    <ns0:p xml:id="130deb26-f597-4500-b303-b0ea8ed5a6dc">
+                        In un altro caso un alimento ha conseguenze dannose per 
+                        la salute. Anche in questo caso deve intervenire il chimico, 
+                        per evidenziare con chiarezza, mediante l’analisi, i compo-
+                        nenti nocivi. In entrambi i casi il dato è un tutto costituito da 
+                        diverse parti che sono dapprima sconosciute;
+                    </ns0:p>
+                <ns0:pb />
+                    <ns0:p xml:id="14da70da-14c6-4c44-a266-e7e275bdf237">
+                        ciò che è cercato sono i componenti.
+                    </ns0:p>
+                    <ns0:p xml:id="8acf85c2-7c25-40d3-98b4-f5296d5fdfa9">
+                        Nella nostra attività i motivi e le ragioni per analizzare 
+                        qualcosa, naturalmente, sono diversi. Non facciamo analisi né 
+                        di opere che vorremmo copiare, né di quelle che non ci con-
+                        vincono.
+                    </ns0:p>
+                    <ns0:p xml:id="16319519-3673-459c-8bb9-884c9da7bbd3">
+                        Noi ricerchiamo le vie che qualcun altro ha percorso nella 
+                        creazione della propria opera, affinché, conoscendole, ci si 
+                        metta su un proprio cammino. Questo tipo di considerazio-
+                        ne deve preservarci dal concepire l’opera come qualcosa di 
+                        rigido, invariabilmente stabilito. Grazie a queste esercitazio-
+                        ni dovremmo poterci preservare dall’atteggiamento di chi si 
+                        avvicina di soppiatto al risultato dell’opera, per coglierne in
+                        tutta fretta ciò che è immediatamente a portata di mano, e 
+                        con questo bottino scappare via.
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="75b78aef-6313-4fc5-b449-6bc044616ab1">
+                        È un peculiare tipo di analisi [3] quella che consiste nell’inda-
+                        gare l’opera a partire dagli stadi del suo sorgere. Ho scelto per 
+                        questo tipo di analisi la parola genesi. Anche il primo libro di 
+                        Mosè, che si occupa della creazione del mondo, si chiama il 
+                        Genesi. Vi è scritto: il primo giorno Dio creò, il secondo giorno, 
+                        e così via. Il mondo che ci circonda è articolato storicamente.
+                    </ns0:p>
+                    <ns0:p xml:id="70fb581f-8ec9-4c18-b02c-0154f0b0f76b">
+                        Noi siamo artisti della figurazione (Bildner), la nostra
+                        azione è quella di produrre opere, ci muoveremo quindi natu-
+                        ralmente in ambito soprattutto formale. Senza per ciò dimen-
+                        ticare che prima dell’inizio formale, o, più semplicemente, 
+                        prima del primo tratto di matita, c’è un’intera preistoria, che
+                        non è però solo il desiderio di espressione, il piacere che gli 
+                        uomini ne ricavano, non si riduce alla necessità esteriore di 
+                        esprimersi, ma è anche uno stato universale dell’umanità, la 
+                        cui direzione è detta visione del mondo [Weltanschauung], 
+                        stato che con interna necessità ora qui ora là preme per ma-
+                        nifestarsi.
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="6c19b516-6879-49df-9066-321ebd849c0f">
+                        Sottolineo questo punto affinché non sorga il malinteso 
+                        per cui l’opera consisterebbe esclusivamente di forma.
+                    </ns0:p>
+                    <ns0:p xml:id="dd2d597a-fa9b-4053-8b33-eb4f7633b4bb">
+                        Ma, per altro verso, devo sottolineare con maggior forza 
+                        che non ci serve a nulla la più precisa e scientifica conoscenza 
+                        della natura delle piante, degli animali, della terra e della sua 
+                        storia, delle stelle, se non abbiamo tutta l’attrezzatura neces-
+                        saria per la sua rappresentazione. Che non ci serve a nulla la 
+                        più spirituale concezione dell’armonia di queste cose nell’uni-
+                        verso, se non siamo anche, secondo la direzione di quello sta-
+                        to dell’umanità, attrezzati di forme. Che non ci serve a nulla
+                        l’animo più profondo, l’anima più bella, se non abbiamo a di-
+                        sposizione le forme a ciò appropriate.
+                    </ns0:p>
+                    <ns0:p xml:id="faf18e38-9215-4175-884f-762bb58d1beb">
+                        Per noi si tratta di rinunciare al colpo di fortuna isolato 
+                        che può portare onore per una volta al dilettante con un ope-
+                        re riuscita [, e a noi forse disonore passeggero], e che come 
+                        caso singolo può perfino essere tale da mettere in imbarazzo 
+                        un professionista.
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="57be846f-bb7d-4b14-8734-efcfa7412bca">
+                        Fatte queste premesse generali, inizio proprio dove inizia 
+                        la forma figurativa: dal punto che si mette in movimento.
+                    </ns0:p>
+            </ns0:div>
+        </ns0:body>
+    </ns0:text>
+<facsimile /></ns0:TEI><ns0:TEI> 
+   <ns0:teiHeader>
+        <ns0:fileDesc>
+            <ns0:titleStmt>
+                <ns0:title>Contributions to the Theory of Pictorial Form.</ns0:title>
+                <ns0:author>P. Klee</ns0:author>
+            </ns0:titleStmt>
+            <ns0:publicationStmt> 
+                <ns0:publisher>Istituto Italiano di Studi Germanici</ns0:publisher>
+                <ns0:pubPlace>Rome</ns0:pubPlace>
+                <ns0:date>2025</ns0:date>
+            </ns0:publicationStmt>
+            <ns0:sourceDesc>
+                <ns0:bibl>
+                    <ns0:respStmt><ns0:resp>Translated by</ns0:resp><ns0:name /></ns0:respStmt>
+                    <ns0:respStmt><ns0:resp>Scientific responsability of</ns0:resp><ns0:name>Tiziana Mancinelli</ns0:name></ns0:respStmt>
+                    <ns0:respStmt><ns0:resp>Coordinated by</ns0:resp><ns0:name>Eleonora De Longis</ns0:name></ns0:respStmt>
+                </ns0:bibl>
+            </ns0:sourceDesc>
+        </ns0:fileDesc>
+    <profileDesc><langUsage><language ident="en">en</language></langUsage></profileDesc></ns0:teiHeader>
+    <ns0:text>
+        <ns0:body>
+            <ns0:div xml:id="div_Klee_introduction">
+                <ns0:pb />
+                <ns0:head type="main" xml:id="5e08d8b7-b9b9-47e8-aeb0-7ecb6a2e92e4">A. Winter semester lectures 1921-1922 <ns0:date>Nov. 14, 1921</ns0:date></ns0:head>
+                    <ns0:p xml:id="6d9e75ba-e687-4ede-bedf-71221fe689dd">
+                       By way of introduction, a brief clarifi-
+                       cation of concepts. First, what the concept 
+                       of "analysis" encompasses: In ordinary con-
+                       versation one usually hears mention of 
+                       chemists' analyses. For instance, a certain 
+                       preparation sells well due to its excellent 
+                       effect. The manufacturer's profits make 
+                       other manufacturers curious, and they 
+                       take a sample of it to the chemist so 
+                       that he can analyze it. He must proceed 
+                       methodically in order to break the prepa-
+                       ration down into its component parts. To 
+                       solve the riddle.
+                    </ns0:p>
+                    <ns0:p xml:id="29bdab67-7599-4598-8f36-87827561417e">
+                       In another case, a stimulant proves to have 
+                       grave consequences for health. Here also the 
+                       chemist must be called upon to reveal the 
+                       harmful components through an analysis.
+                    </ns0:p>
+                    <ns0:p xml:id="f143e5f6-0d97-42f2-abf0-a50f7e57c901">
+                       In both cases the given substance is a 
+                       whole composed of different, initially unknown
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="a9e510aa-f2fa-440d-a87e-a8ea2dc270c7">
+                       parts; the components are what is sought after.
+                    </ns0:p>
+                    <ns0:p xml:id="d39c9f8d-0ca6-48cb-b2af-d3f117db84a3">
+                       In our business, the motives or 
+                       inducements that lead us to make analyses 
+                       are of course different. We do not analyze 
+                       works that we would like to copy, nor works 
+                       we have reason to distrust.
+                    </ns0:p>
+                    <ns0:p xml:id="875ff802-5808-4fed-ad61-3d4ffb977fcc">
+                       We investigate the paths that 
+                       another has followed in the creation of 
+                       a work in order, by becoming familiar 
+                       with these paths, to get going ourselves.
+                       This type of examination should prevent 
+                       us from regarding the work as something 
+                       rigid, immutably fixed. By means of such 
+                       exercises we can prevent ourselves from 
+                       sneaking up on a finished work only to 
+                       quickly pluck up what stands out the 
+                       most and run off with it.
+                    </ns0:p>
+                    <ns0:p xml:id="9e2c4e6b-de05-4312-942a-7bd5d5b638f1">
+                       A special type of analysis is the
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="e8efe403-29ab-4408-9d80-0d38a1bfe94f">
+                       examination of the work through the stages 
+                       of its emergence. I designate this type with 
+                       the word "genesis." The first book of Moses, 
+                       which deals with the creation of the world, 
+                       is also called Genesis. There it is written 
+                       what God created on the first day, what 
+                       on the second, and so forth. The universe 
+                       surrounding us undergoes a historical 
+                       articulation.
+                    </ns0:p>
+                    <ns0:p xml:id="b24062c8-1e3e-4b78-bc8a-36d01e742d65">
+                       We are makers, working practitioners, 
+                       and hence it is natural that here we shall 
+                       move chiefly in a formal domain, all the 
+                       while not forgetting that before the formal 
+                       beginning, or (put more simply) before the 
+                       first stroke, lies an entire prehistory: not 
+                       only, say, the yearning, the human desire 
+                       to express oneself, not only the outward 
+                       necessity to do so, but also a general human 
+                       condition, whose orientation is called a 
+                       weltanschauung, which, with an inner necessity,
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p xml:id="75fd2d5b-fef3-49a1-a636-6d9cdfcfbd06">
+                       urges its manifestation in this or that 
+                       direction.
+                    </ns0:p>
+                    <ns0:p xml:id="59337d0b-2915-4d41-a032-754a6e29b62d">
+                       I emphasize this lest the misunder-
+                       standing arise that a work consists only 
+                       of form.
+                    </ns0:p>
+                    <ns0:p xml:id="0a42f2a2-a86e-4dc7-9cf9-798652b743b0">
+                       But on the other hand, I must empha-
+                       size here even more that the most precise 
+                       scientific knowledge of nature, plants, 
+                       animals, the earth and its history, or 
+                       of the stars is useless to us if we are 
+                       not provided with all the tools for their 
+                       representation; that the profoundest 
+                       understanding of the synergy of these 
+                       things in the universe is of no use to 
+                       us if we are not also equipped with forms 
+                       directed towards that purpose; that the 
+                       deepest feeling, the most beautiful soul, 
+                       is useless unless we have the proper forms 
+                       at hand.
+                    </ns0:p>
+                    <ns0:p>
+                       <ns0:s part="I"> Here it means renouncing the excep-
+                       tional fluke that on occasion earns the 
+                       dilettante honor with a successful work that</ns0:s>
+                    </ns0:p>
+                <ns0:pb /> 
+                    <ns0:p>
+                       After these general premises, I shall 
+                       begin where the pictorial form actually 
+                       begins, with the point that sets itself 
+                       in motion.
+                    </ns0:p>
+                    <ns0:p>
+                        <ns0:s part="F">can, as an isolated case, shame the professionals.</ns0:s>
+                    </ns0:p>
+            </ns0:div>
+        </ns0:body>
+    </ns0:text>
+<facsimile /></ns0:TEI></TEI>
