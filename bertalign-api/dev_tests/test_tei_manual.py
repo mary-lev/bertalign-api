@@ -4,15 +4,17 @@ Manual test for TEI service functionality.
 """
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+import pytest
+from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.tei_service import TEIService
 from app.services.bertalign_service import BertalignService
 
 def test_basic_tei_parsing():
     """Test basic TEI parsing functionality."""
-    print("Testing TEI parsing...")
-    
     # Create services
     bertalign_service = BertalignService()
     tei_service = TEIService(bertalign_service)
@@ -46,65 +48,99 @@ def test_basic_tei_parsing():
     # Parse document
     doc = tei_service.parse_tei_file(italian_tei)
     
-    print(f"✓ Language: {doc.language}")
-    print(f"✓ Title: {doc.title}")
-    print(f"✓ Text elements found: {len(doc.text_elements)}")
+    # Verify parsing results
+    assert doc.language == "it", f"Expected language 'it', got '{doc.language}'"
+    assert doc.title == "Test Document", f"Expected title 'Test Document', got '{doc.title}'"
+    assert len(doc.text_elements) > 0, "No text elements found"
     
-    for i, elem in enumerate(doc.text_elements):
-        print(f"  [{i}] {elem.tag}: {elem.text[:50]}...")
-    
-    print("TEI parsing test completed successfully!\n")
+    # Verify text elements contain expected content
+    text_contents = [elem.text for elem in doc.text_elements]
+    assert any("Ciao mondo" in text for text in text_contents), "Expected text content not found"
+    assert any("Benvenuti" in text for text in text_contents), "Expected text content not found"
 
 def test_tei_alignment():
     """Test full TEI alignment workflow."""
-    print("Testing TEI alignment...")
-    
     # Create services
     bertalign_service = BertalignService()
     tei_service = TEIService(bertalign_service)
     
+    # Find the texts directory relative to this test file
+    current_dir = Path(__file__).parent
+    texts_dir = current_dir / 'texts'
+    if not texts_dir.exists():
+        # Try parent directory
+        texts_dir = current_dir.parent / 'texts'
+    
+    italian_file = texts_dir / 'italian.xml'
+    english_file = texts_dir / 'english.xml'
+    
+    # Skip test if files don't exist
+    if not italian_file.exists() or not english_file.exists():
+        pytest.skip(f"Test files not found: {italian_file} or {english_file}")
+    
     # Load actual test files
-    with open('texts/italian.xml', 'r', encoding='utf-8') as f:
+    with open(italian_file, 'r', encoding='utf-8') as f:
         italian_tei = f.read()
     
-    with open('texts/english.xml', 'r', encoding='utf-8') as f:
+    with open(english_file, 'r', encoding='utf-8') as f:
         english_tei = f.read()
     
-    print("✓ Loaded test TEI files")
+    # Verify files were loaded
+    assert len(italian_tei) > 100, "Italian TEI file appears to be empty or too small"
+    assert len(english_tei) > 100, "English TEI file appears to be empty or too small"
+    assert '<TEI' in italian_tei, "Italian file doesn't appear to be valid TEI"
+    assert '<TEI' in english_tei, "English file doesn't appear to be valid TEI"
     
-    # Perform alignment
+    # Perform alignment with explicit language parameters
+    result = tei_service.align_tei_documents(italian_tei, english_tei, source_language="it", target_language="en")
+    
+    # Verify result structure
+    assert isinstance(result, dict), "Result should be a dictionary"
+    assert 'source_language' in result, "Missing source_language in result"
+    assert 'target_language' in result, "Missing target_language in result"
+    assert 'alignment_count' in result, "Missing alignment_count in result"
+    assert 'processing_time' in result, "Missing processing_time in result"
+    assert 'aligned_xml' in result, "Missing aligned_xml in result"
+    
+    # Verify alignment results
+    assert result['alignment_count'] > 0, "No alignments were created"
+    assert result['processing_time'] > 0, "Processing time should be positive"
+    
+    # Check aligned XML structure
+    aligned_xml = result['aligned_xml']
+    assert len(aligned_xml) > 100, "Aligned XML appears to be empty or too small"
+    assert '<standOff>' in aligned_xml, "standOff element missing from aligned XML"
+    assert '<linkGrp type="translation">' in aligned_xml, "linkGrp element missing from aligned XML"
+    assert 'xml:id=' in aligned_xml, "xml:id attributes missing from aligned XML"
+    
+    # Optionally save result for inspection
+    output_file = texts_dir / 'test_output.xml'
     try:
-        result = tei_service.align_tei_documents(italian_tei, english_tei)
-        
-        print(f"✓ Source language: {result['source_language']}")
-        print(f"✓ Target language: {result['target_language']}")
-        print(f"✓ Alignment count: {result['alignment_count']}")
-        print(f"✓ Processing time: {result['processing_time']:.2f}s")
-        
-        # Check aligned XML structure
-        aligned_xml = result['aligned_xml']
-        print(f"✓ Generated aligned XML ({len(aligned_xml)} chars)")
-        
-        # Verify key elements
-        assert '<standOff>' in aligned_xml
-        assert '<linkGrp type="translation">' in aligned_xml
-        assert 'xml:id=' in aligned_xml
-        print("✓ XML structure validation passed")
-        
-        # Save result for inspection
-        with open('texts/test_output.xml', 'w', encoding='utf-8') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             f.write(aligned_xml)
-        print("✓ Saved aligned XML to texts/test_output.xml")
-        
-        print("TEI alignment test completed successfully!\n")
-        
-    except Exception as e:
-        print(f"✗ TEI alignment failed: {e}")
-        import traceback
-        traceback.print_exc()
+    except Exception:
+        # Don't fail test if we can't write output file
+        pass
 
 if __name__ == "__main__":
     print("=== TEI Service Manual Test ===\n")
-    test_basic_tei_parsing()
-    test_tei_alignment()
-    print("=== All tests completed ===")
+    
+    print("Running basic TEI parsing test...")
+    try:
+        test_basic_tei_parsing()
+        print("✓ Basic TEI parsing test passed\n")
+    except Exception as e:
+        print(f"✗ Basic TEI parsing test failed: {e}\n")
+        import traceback
+        traceback.print_exc()
+    
+    print("Running TEI alignment test...")
+    try:
+        test_tei_alignment()
+        print("✓ TEI alignment test passed\n")
+    except Exception as e:
+        print(f"✗ TEI alignment test failed: {e}\n")
+        import traceback
+        traceback.print_exc()
+    
+    print("=== Manual tests completed ===")

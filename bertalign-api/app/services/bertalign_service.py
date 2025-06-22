@@ -67,8 +67,8 @@ class BertalignService:
         
         return AlignmentResponse(
             alignments=alignments,
-            source_language=aligner.src_lang_name,
-            target_language=aligner.tgt_lang_name,
+            source_language=aligner.src_lang,
+            target_language=aligner.tgt_lang,
             processing_time=processing_time,
             total_source_sentences=aligner.src_num,
             total_target_sentences=aligner.tgt_num,

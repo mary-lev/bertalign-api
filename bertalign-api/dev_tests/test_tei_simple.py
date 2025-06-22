@@ -7,8 +7,6 @@ from xml.etree import ElementTree as ET
 
 def test_tei_parsing():
     """Test basic TEI XML parsing and structure creation."""
-    print("Testing TEI XML parsing...")
-    
     # Sample TEI document
     italian_tei = '''<?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -42,12 +40,12 @@ def test_tei_parsing():
     # Extract language
     lang_elem = root.find('.//tei:profileDesc/tei:langUsage/tei:language', ns)
     language = lang_elem.attrib['ident'] if lang_elem is not None else 'unknown'
-    print(f"✓ Language: {language}")
+    assert language == 'it', f"Expected language 'it', got '{language}'"
     
     # Extract title
     title_elem = root.find('.//tei:titleStmt/tei:title', ns)
     title = title_elem.text.strip() if title_elem is not None and title_elem.text else 'Untitled'
-    print(f"✓ Title: {title}")
+    assert title == 'Contributi alla teoria figurativa della forma', f"Unexpected title: {title}"
     
     # Extract paragraphs
     body = root.find('.//tei:body', ns)
@@ -58,16 +56,13 @@ def test_tei_parsing():
             if text_content:
                 paragraphs.append(text_content)
     
-    print(f"✓ Found {len(paragraphs)} paragraphs:")
-    for i, p in enumerate(paragraphs):
-        print(f"  [{i}] {p[:50]}...")
-    
-    return paragraphs
+    # Verify paragraph extraction
+    assert len(paragraphs) == 2, f"Expected 2 paragraphs, found {len(paragraphs)}"
+    assert "Come introduzione un breve chiarimento concettuale." in paragraphs
+    assert "In primo luogo ciò che è contenuto nel concetto di analisi." in paragraphs
 
 def test_alignment_xml_generation():
     """Test creation of aligned TEI XML structure."""
-    print("\nTesting aligned XML generation...")
-    
     # Mock alignment data
     alignments = [
         {
@@ -113,24 +108,28 @@ def test_alignment_xml_generation():
             'type': 'Linguistic'
         })
     
-    print(f"✓ Created {len(alignments)} alignment links")
-    print(f"✓ Generated {len(alignment_map)} UUIDs")
+    # Verify expected structures were created
+    assert len(alignments) == 2, f"Expected 2 alignments, got {len(alignments)}"
+    assert len(alignment_map) == 4, f"Expected 4 UUIDs, got {len(alignment_map)}"
     
     # Convert to string to check structure
     xml_string = ET.tostring(root, encoding='unicode', xml_declaration=True)
     
-    # Verify structure
-    assert '<standOff>' in xml_string
-    assert '<linkGrp type="translation">' in xml_string
-    assert 'target="#' in xml_string
-    print("✓ XML structure validation passed")
-    
-    print(f"✓ Generated XML preview:\n{xml_string[:500]}...")
-    
-    return xml_string
+    # Verify XML structure
+    assert '<standOff>' in xml_string, "standOff element missing"
+    assert '<linkGrp type="translation">' in xml_string, "linkGrp element missing"
+    assert 'target="#' in xml_string, "target attributes missing"
+    assert xml_string.count('<link ') == 2, f"Expected 2 link elements, found {xml_string.count('<link ')}"
 
 if __name__ == "__main__":
     print("=== Simple TEI Test ===\n")
-    paragraphs = test_tei_parsing()
-    aligned_xml = test_alignment_xml_generation()
-    print("\n=== Test completed successfully ===")
+    
+    print("Testing TEI parsing...")
+    test_tei_parsing()
+    print("✓ TEI parsing test passed")
+    
+    print("\nTesting aligned XML generation...")
+    test_alignment_xml_generation()
+    print("✓ XML generation test passed")
+    
+    print("\n=== All tests completed successfully ===")

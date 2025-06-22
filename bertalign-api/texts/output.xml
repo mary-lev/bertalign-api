@@ -1,42 +1,70 @@
-<TEI xmlns="http://www.tei-c.org/ns/1.0" version="3.3.0">
- <teiHeader>
-  <fileDesc>
-   <titleStmt>
-    <title/>
-   </titleStmt>
-   <publicationStmt><p/></publicationStmt>
-  </fileDesc>
- </teiHeader>
- <standOff><linkGrp type="translation">
-    <link target="#72f38fc9-2c66-4e03-ac44-b1fdc25617a2 #d6fea329-3d32-49f2-8966-ccdfdf3065ff" type="Linguistic"/>
-</linkGrp></standOff>
-<TEI xmlns="http://www.tei-c.org/ns/1.0"> 
-    <teiHeader>
+<teiCorpus version="3.3.0"
+    xmlns="http://www.tei-c.org/ns/1.0">
+         <teiHeader>
         <fileDesc>
             <titleStmt>
-                <title>Contributi alla teoria figurativa della forma</title>
-                <author>P. Klee</author>
+                <title>Aligned Parallel Texts</title>
             </titleStmt>
-            <publicationStmt> 
-                <publisher>Istituto Italiano di Studi Germanici</publisher>
-                <pubPlace>Roma</pubPlace>
-                <date>2025</date>
+            <publicationStmt>
+                <p>Aligned using Bertalign API</p>
             </publicationStmt>
-            <sourceDesc>
-                <bibl>
-                    <respStmt><resp>Traduzione a cura di</resp><name>Hansmichael Hohenegger</name><name>C. Miglio</name></respStmt>
-                    <respStmt><resp>Responsabilità scientifica di</resp><name>Tiziana Mancinelli</name></respStmt>
-                    <respStmt><resp>Coordinamento a cura di</resp><name>Eleonora De Longis</name></respStmt>
-                </bibl>
-            </sourceDesc>
         </fileDesc>
-    <profileDesc><langUsage><language ident="it">it</language></langUsage></profileDesc></teiHeader>
-    <text>
-        <body>
-            <div xml:id="div_Klee_introduction">
-                <pb/>
-                <head type="main">A Lezioni del semestre invernale 1921-1922</head>
-                <head type="subtype"><date>14 novembre 1921</date></head> 
+        <profileDesc>
+            <langUsage>
+                <language ident="it">Source language: it</language>
+                <language ident="en">Target language: en</language>
+            </langUsage>
+        </profileDesc>
+    </teiHeader>
+        <standOff>
+            <linkGrp type="translation">
+                <link target="#72f38fc9-2c66-4e03-ac44-b1fdc25617a2 #d6fea329-3d32-49f2-8966-ccdfdf3065ff" type="Linguistic"/>
+            </linkGrp>
+        </standOff>
+    <TEI>
+        <teiHeader>
+            <fileDesc>
+                <titleStmt>
+                    <title>Contributi alla teoria figurativa della forma</title>
+                    <author>P. Klee</author>
+                </titleStmt>
+                <publicationStmt>
+                    <publisher>Istituto Italiano di Studi Germanici</publisher>
+                    <pubPlace>Roma</pubPlace>
+                    <date>2025</date>
+                </publicationStmt>
+                <sourceDesc>
+                    <bibl>
+                        <respStmt>
+                            <resp>Traduzione a cura di</resp>
+                            <name>Hansmichael Hohenegger</name>
+                            <name>C. Miglio</name>
+                        </respStmt>
+                        <respStmt>
+                            <resp>Responsabilità scientifica di</resp>
+                            <name>Tiziana Mancinelli</name>
+                        </respStmt>
+                        <respStmt>
+                            <resp>Coordinamento a cura di</resp>
+                            <name>Eleonora De Longis</name>
+                        </respStmt>
+                    </bibl>
+                </sourceDesc>
+            </fileDesc>
+            <profileDesc>
+                <langUsage>
+                    <language ident="it">it</language>
+                </langUsage>
+            </profileDesc>
+        </teiHeader>
+        <text>
+            <body>
+                <div xml:id="div_Klee_introduction">
+                    <pb/>
+                    <head type="main">A Lezioni del semestre invernale 1921-1922</head>
+                    <head type="subtype">
+                        <date>14 novembre 1921</date>
+                    </head>
                     <p xml:id="72f38fc9-2c66-4e03-ac44-b1fdc25617a2">
                         Come introduzione un breve chiarimento concettuale. In
                         primo luogo ciò che è contenuto nel concetto di analisi. Nel
@@ -55,7 +83,7 @@
                         nenti nocivi. In entrambi i casi il dato è un tutto costituito da 
                         diverse parti che sono dapprima sconosciute;
                     </p>
-                <pb/>
+                    <pb/>
                     <p>
                         ciò che è cercato sono i componenti.
                     </p>
@@ -76,7 +104,7 @@
                         tutta fretta ciò che è immediatamente a portata di mano, e 
                         con questo bottino scappare via.
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                         È un peculiare tipo di analisi [3] quella che consiste nell’inda-
                         gare l’opera a partire dagli stadi del suo sorgere. Ho scelto per 
@@ -98,7 +126,7 @@
                         stato che con interna necessità ora qui ora là preme per ma-
                         nifestarsi.
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                         Sottolineo questo punto affinché non sorga il malinteso 
                         per cui l’opera consisterebbe esclusivamente di forma.
@@ -122,40 +150,57 @@
                         caso singolo può perfino essere tale da mettere in imbarazzo 
                         un professionista.
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                         Fatte queste premesse generali, inizio proprio dove inizia 
                         la forma figurativa: dal punto che si mette in movimento.
                     </p>
-            </div>
-        </body>
-    </text>
-<facsimile/></TEI><TEI xmlns="http://www.tei-c.org/ns/1.0"> 
-   <teiHeader>
-        <fileDesc>
-            <titleStmt>
-                <title>Contributions to the Theory of Pictorial Form.</title>
-                <author>P. Klee</author>
-            </titleStmt>
-            <publicationStmt> 
-                <publisher>Istituto Italiano di Studi Germanici</publisher>
-                <pubPlace>Rome</pubPlace>
-                <date>2025</date>
-            </publicationStmt>
-            <sourceDesc>
-                <bibl>
-                    <respStmt><resp>Translated by</resp><name/></respStmt>
-                    <respStmt><resp>Scientific responsability of</resp><name>Tiziana Mancinelli</name></respStmt>
-                    <respStmt><resp>Coordinated by</resp><name>Eleonora De Longis</name></respStmt>
-                </bibl>
-            </sourceDesc>
-        </fileDesc>
-    <profileDesc><langUsage><language ident="en">en</language></langUsage></profileDesc></teiHeader>
-    <text>
-        <body>
-            <div xml:id="div_Klee_introduction">
-                <pb/>
-                <head type="main">A. Winter semester lectures 1921-1922 <date>Nov. 14, 1921</date></head>
+                </div>
+            </body>
+        </text>
+        <facsimile/>
+    </TEI>
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader>
+            <fileDesc>
+                <titleStmt>
+                    <title>Contributions to the Theory of Pictorial Form.</title>
+                    <author>P. Klee</author>
+                </titleStmt>
+                <publicationStmt>
+                    <publisher>Istituto Italiano di Studi Germanici</publisher>
+                    <pubPlace>Rome</pubPlace>
+                    <date>2025</date>
+                </publicationStmt>
+                <sourceDesc>
+                    <bibl>
+                        <respStmt>
+                            <resp>Translated by</resp>
+                            <name/>
+                        </respStmt>
+                        <respStmt>
+                            <resp>Scientific responsability of</resp>
+                            <name>Tiziana Mancinelli</name>
+                        </respStmt>
+                        <respStmt>
+                            <resp>Coordinated by</resp>
+                            <name>Eleonora De Longis</name>
+                        </respStmt>
+                    </bibl>
+                </sourceDesc>
+            </fileDesc>
+            <profileDesc>
+                <langUsage>
+                    <language ident="en">en</language>
+                </langUsage>
+            </profileDesc>
+        </teiHeader>
+        <text>
+            <body>
+                <div xml:id="div_Klee_introduction">
+                    <pb/>
+                    <head type="main">A. Winter semester lectures 1921-1922 <date>Nov. 14, 1921</date>
+                    </head>
                     <p xml:id="d6fea329-3d32-49f2-8966-ccdfdf3065ff">
                        By way of introduction, a brief clarifi-
                        cation of concepts. First, what the concept 
@@ -181,7 +226,7 @@
                        In both cases the given substance is a 
                        whole composed of different, initially unknown
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                        parts; the components are what is sought after.
                     </p>
@@ -208,7 +253,7 @@
                     <p>
                        A special type of analysis is the
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                        examination of the work through the stages 
                        of its emergence. I designate this type with 
@@ -233,7 +278,7 @@
                        condition, whose orientation is called a 
                        weltanschauung, which, with an inner necessity,
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                        urges its manifestation in this or that 
                        direction.
@@ -260,11 +305,11 @@
                        at hand.
                     </p>
                     <p>
-                       <s part="I"> Here it means renouncing the excep-
+                        <s part="I"> Here it means renouncing the excep-
                        tional fluke that on occasion earns the 
                        dilettante honor with a successful work that</s>
                     </p>
-                <pb/> 
+                    <pb/>
                     <p>
                        After these general premises, I shall 
                        begin where the pictorial form actually 
@@ -274,7 +319,9 @@
                     <p>
                         <s part="F">can, as an isolated case, shame the professionals.</s>
                     </p>
-            </div>
-        </body>
-    </text>
-<facsimile/></TEI></TEI>
+                </div>
+            </body>
+        </text>
+        <facsimile/>
+    </TEI>
+</teiCorpus>

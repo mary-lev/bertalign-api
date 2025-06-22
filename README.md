@@ -161,28 +161,106 @@ bertalign-api/
 └── deploy.sh               # Cloud Run deployment
 ```
 
-## 🔬 TEI XML Features
+## 🔬 TEI Corpus Features
+
+### TEI Corpus Output Structure
+
+The API produces **TEI-compliant parallel corpora** using the `<teiCorpus>` standard:
+
+```xml
+<teiCorpus version="3.3.0" xmlns="http://www.tei-c.org/ns/1.0">
+    <!-- Corpus-level header -->
+    <teiHeader>
+        <fileDesc>
+            <titleStmt><title>Aligned Parallel Texts</title></titleStmt>
+            <publicationStmt><p>Aligned using Bertalign API</p></publicationStmt>
+        </fileDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="it">Source language: it</language>
+                <language ident="en">Target language: en</language>
+            </langUsage>
+        </profileDesc>
+    </teiHeader>
+    
+    <!-- StandOff alignment annotations -->
+    <standOff>
+        <linkGrp type="translation">
+            <link target="#uuid-source #uuid-target" type="Linguistic"/>
+        </linkGrp>
+    </standOff>
+    
+    <!-- Complete source TEI document (all structure preserved) -->
+    <TEI>
+        <teiHeader><!-- Original metadata preserved --></teiHeader>
+        <text>
+            <body>
+                <div xml:id="original-div-id">
+                    <pb/> <!-- Page breaks preserved -->
+                    <head type="main">Original headings preserved</head>
+                    <p xml:id="uuid-aligned">Aligned paragraph with UUID</p>
+                    <p>Unaligned paragraph (no xml:id)</p>
+                </div>
+            </body>
+        </text>
+        <facsimile/> <!-- All original elements preserved -->
+    </TEI>
+    
+    <!-- Complete target TEI document (all structure preserved) -->
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <!-- Complete original structure maintained -->
+    </TEI>
+</teiCorpus>
+```
+
+### Key Features
+
+#### ✅ **Structure Preservation**
+- Complete original TEI hierarchy maintained (`<div>`, `<pb>`, `<head>`, etc.)
+- All original element attributes preserved (`xml:id`, `type`, etc.)
+- Page breaks, headings, and document structure intact
+
+#### ✅ **Metadata Preservation**  
+- Original `<teiHeader>` completely preserved
+- Author, title, publication information maintained
+- Bibliographic data and source descriptions retained
+
+#### ✅ **TEI P5 Compliance**
+- Uses `<teiCorpus>` for parallel corpus structure
+- StandOff annotations follow TEI guidelines
+- Proper namespace handling for multiple documents
+
+#### ✅ **Selective Alignment Markup**
+- `xml:id` attributes added only to aligned paragraphs
+- Unaligned content preserved without modification
+- UUID links connect aligned segments via standOff
 
 ### Supported TEI Elements
 - `<p>` (paragraphs) - Primary alignment units
 - `<head>` (headings) - Secondary alignment units  
-- Full TEI header preservation
-- Automatic `xml:id` generation for aligned elements
-
-### StandOff Annotation Output
-```xml
-<standOff>
-  <linkGrp type="translation">
-    <link target="#source-uuid #target-uuid" type="Linguistic"/>
-  </linkGrp>
-</standOff>
-```
+- `<div>` (divisions) - Structure preservation
+- `<pb>` (page breaks) - Layout preservation
+- All TEI header elements - Complete metadata preservation
 
 ### Use Cases
-- **Digital Humanities**: Parallel corpus creation
-- **Scholarly Editions**: Multilingual text alignment
-- **Translation Studies**: Alignment analysis  
-- **Text Research**: Cross-lingual text comparison
+- **Digital Humanities**: TEI-compliant parallel corpus creation
+- **Scholarly Editions**: Multilingual critical editions with preserved structure
+- **Translation Studies**: Formal alignment analysis with complete metadata
+- **Corpus Linguistics**: Research-grade parallel corpora
+- **Critical Editions**: Comparative text analysis with bibliographic preservation
+
+### 🚧 Implementation Status
+
+**Current Implementation**: The TEI alignment endpoint currently produces a simplified structure that needs to be updated to match the `<teiCorpus>` specification above.
+
+**Planned Update**: The implementation will be updated to:
+- Generate proper `<teiCorpus>` root element instead of simple `<TEI>`
+- Preserve complete original TEI structure for both documents
+- Add corpus-level header with alignment metadata
+- Maintain all original metadata and document hierarchy
+- Use standOff annotations with UUID references to aligned elements
+
+This will ensure full TEI P5 compliance and create authentic digital humanities resources.
 
 ## 📈 Performance
 

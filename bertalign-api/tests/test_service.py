@@ -15,8 +15,8 @@ def test_bertalign_service_basic():
     
     response = BertalignService.align_texts(request)
     
-    assert response.source_language == "English"
-    assert response.target_language == "French"
+    assert response.source_language == "en"
+    assert response.target_language == "fr"
     assert response.processing_time > 0
     assert len(response.alignments) > 0
 

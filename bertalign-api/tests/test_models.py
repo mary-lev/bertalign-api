@@ -175,7 +175,7 @@ class TestTEIAlignmentRequest:
                 source_language="en",
                 target_language="unsupported"
             )
-        assert "is not supported" in str(exc_info.value)
+        assert "String should match pattern" in str(exc_info.value) or "is not supported" in str(exc_info.value)
     
     def test_empty_tei_xml(self):
         """Test TEI request with empty XML."""

@@ -1,267 +1,110 @@
 #!/usr/bin/env python3
 """
-Test TEI alignment with actual files using mock bertalign service.
+Test TEI alignment with actual files using real TEI and Bertalign services.
 """
-import uuid
-from xml.etree import ElementTree as ET
-from typing import List, Dict, Any
-from dataclasses import dataclass
+import sys
+import os
+import pytest
+from pathlib import Path
 
-@dataclass
-class MockAlignmentPair:
-    """Mock alignment pair for testing."""
-    source_text: str
-    target_text: str
-    source_sentences: List[str]
-    target_sentences: List[str]
-    alignment_score: float
-    source_indices: List[int]
-    target_indices: List[int]
+# Add parent directory to path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-@dataclass
-class MockAlignmentResult:
-    """Mock alignment result for testing."""
-    alignments: List[MockAlignmentPair]
-    source_language: str
-    target_language: str
-    processing_time: float
-
-class MockTEIService:
-    """Simplified TEI service for local testing."""
-    
-    def __init__(self):
-        self.ns = {'tei': 'http://www.tei-c.org/ns/1.0'}
-    
-    def parse_tei_file(self, xml_content: str) -> Dict[str, Any]:
-        """Parse TEI XML content and extract information."""
-        root = ET.fromstring(xml_content)
-        
-        # Extract language
-        lang_elem = root.find('.//tei:profileDesc/tei:langUsage/tei:language', self.ns)
-        language = lang_elem.attrib.get('ident', 'unknown') if lang_elem is not None else 'unknown'
-        
-        # Extract title
-        title_elem = root.find('.//tei:titleStmt/tei:title', self.ns)
-        title = title_elem.text.strip() if title_elem is not None and title_elem.text else 'Untitled'
-        
-        # Extract text elements
-        text_elements = []
-        body = root.find('.//tei:body', self.ns)
-        
-        if body is not None:
-            for elem in body.iter():
-                if elem.tag.endswith('}p') or elem.tag.endswith('}head'):
-                    text_content = self._get_element_text(elem)
-                    if text_content and text_content.strip():
-                        text_elements.append({
-                            'tag': elem.tag.split('}')[-1],
-                            'text': text_content.strip(),
-                            'attrib': dict(elem.attrib)
-                        })
-        
-        return {
-            'root': root,
-            'language': language,
-            'title': title,
-            'text_elements': text_elements
-        }
-    
-    def _get_element_text(self, element: ET.Element) -> str:
-        """Extract all text content from element and its children."""
-        texts = []
-        if element.text:
-            texts.append(element.text.strip())
-        
-        for child in element:
-            child_text = self._get_element_text(child)
-            if child_text:
-                texts.append(child_text)
-            if child.tail:
-                texts.append(child.tail.strip())
-        
-        return ' '.join(texts).strip()
-    
-    def mock_align_texts(self, source_texts: List[str], target_texts: List[str]) -> MockAlignmentResult:
-        """Create mock alignment between text lists."""
-        alignments = []
-        
-        # Simple 1:1 alignment for first few pairs
-        min_len = min(len(source_texts), len(target_texts))
-        for i in range(min_len):
-            if source_texts[i] and target_texts[i]:  # Skip empty texts
-                alignments.append(MockAlignmentPair(
-                    source_text=source_texts[i],
-                    target_text=target_texts[i],
-                    source_sentences=[source_texts[i]],
-                    target_sentences=[target_texts[i]],
-                    alignment_score=0.85 + (i * 0.02),  # Mock varying scores
-                    source_indices=[i],
-                    target_indices=[i]
-                ))
-        
-        return MockAlignmentResult(
-            alignments=alignments,
-            source_language="it",
-            target_language="en",
-            processing_time=0.5
-        )
-    
-    def align_tei_documents(self, source_xml: str, target_xml: str) -> Dict[str, Any]:
-        """Align two TEI documents and return result."""
-        # Parse documents
-        source_doc = self.parse_tei_file(source_xml)
-        target_doc = self.parse_tei_file(target_xml)
-        
-        print(f"Source ({source_doc['language']}): {source_doc['title']}")
-        print(f"Target ({target_doc['language']}): {target_doc['title']}")
-        print(f"Source elements: {len(source_doc['text_elements'])}")
-        print(f"Target elements: {len(target_doc['text_elements'])}")
-        
-        # Extract texts
-        source_texts = [elem['text'] for elem in source_doc['text_elements']]
-        target_texts = [elem['text'] for elem in target_doc['text_elements']]
-        
-        # Mock alignment
-        alignment_result = self.mock_align_texts(source_texts, target_texts)
-        
-        # Generate aligned XML
-        aligned_xml = self._generate_aligned_tei(source_doc, target_doc, alignment_result.alignments)
-        
-        return {
-            'aligned_xml': aligned_xml,
-            'source_language': source_doc['language'],
-            'target_language': target_doc['language'],
-            'alignment_count': len(alignment_result.alignments),
-            'processing_time': alignment_result.processing_time
-        }
-    
-    def _generate_aligned_tei(self, source_doc: Dict, target_doc: Dict, alignments: List[MockAlignmentPair]) -> str:
-        """Generate aligned TEI XML with standOff structure."""
-        
-        # Create root TEI element
-        root = ET.Element('TEI', attrib={
-            'xmlns': 'http://www.tei-c.org/ns/1.0',
-            'version': '3.3.0'
-        })
-        
-        # Add minimal header
-        header = ET.SubElement(root, 'teiHeader')
-        file_desc = ET.SubElement(header, 'fileDesc')
-        title_stmt = ET.SubElement(file_desc, 'titleStmt')
-        title_elem = ET.SubElement(title_stmt, 'title')
-        title_elem.text = f"Aligned: {source_doc['title']} - {target_doc['title']}"
-        pub_stmt = ET.SubElement(file_desc, 'publicationStmt')
-        ET.SubElement(pub_stmt, 'p')
-        
-        # Create standOff with alignment links
-        standoff = ET.SubElement(root, 'standOff')
-        link_grp = ET.SubElement(standoff, 'linkGrp', attrib={'type': 'translation'})
-        
-        # Generate UUIDs and create links
-        alignment_map = {}
-        for alignment in alignments:
-            source_uuid = str(uuid.uuid4())
-            target_uuid = str(uuid.uuid4())
-            
-            alignment_map[alignment.source_text] = source_uuid
-            alignment_map[alignment.target_text] = target_uuid
-            
-            # Create link element
-            ET.SubElement(link_grp, 'link', attrib={
-                'target': f'#{source_uuid} #{target_uuid}',
-                'type': 'Linguistic'
-            })
-        
-        # Add source document with IDs
-        source_tei = self._create_tei_with_ids(source_doc, alignment_map, 'it')
-        root.append(source_tei)
-        
-        # Add target document with IDs
-        target_tei = self._create_tei_with_ids(target_doc, alignment_map, 'en')
-        root.append(target_tei)
-        
-        return ET.tostring(root, encoding='unicode', xml_declaration=True)
-    
-    def _create_tei_with_ids(self, doc: Dict, alignment_map: Dict[str, str], lang: str) -> ET.Element:
-        """Create TEI element with xml:id attributes for aligned elements."""
-        
-        # Create a copy of the original document
-        tei_copy = ET.fromstring(ET.tostring(doc['root'], encoding='unicode'))
-        
-        # Add/update language in profileDesc
-        profile_desc = tei_copy.find('.//tei:profileDesc', self.ns)
-        if profile_desc is None:
-            profile_desc = ET.SubElement(tei_copy.find('.//tei:teiHeader', self.ns), 'profileDesc')
-        
-        lang_usage = profile_desc.find('.//tei:langUsage', self.ns)
-        if lang_usage is None:
-            lang_usage = ET.SubElement(profile_desc, 'langUsage')
-        
-        # Clear existing language elements and add new one
-        for lang_elem in lang_usage.findall('.//tei:language', self.ns):
-            lang_usage.remove(lang_elem)
-        
-        language = ET.SubElement(lang_usage, 'language', attrib={'ident': lang})
-        language.text = lang
-        
-        # Add xml:id to aligned elements
-        body = tei_copy.find('.//tei:body', self.ns)
-        if body is not None:
-            for elem in body.iter():
-                if elem.tag.endswith('}p') or elem.tag.endswith('}head'):
-                    elem_text = self._get_element_text(elem)
-                    if elem_text and elem_text.strip() in alignment_map:
-                        elem.set('{http://www.w3.org/XML/1998/namespace}id', 
-                                alignment_map[elem_text.strip()])
-        
-        # Add empty facsimile element
-        ET.SubElement(tei_copy, 'facsimile')
-        
-        return tei_copy
+from app.services.tei_service import TEIService
+from app.services.bertalign_service import BertalignService
 
 def test_with_actual_files():
-    """Test with actual Italian and English TEI files."""
-    print("=== Testing with actual TEI files ===\n")
+    """Test with actual Italian and English TEI files using real services."""
+    # Find the texts directory relative to this test file
+    current_dir = Path(__file__).parent
+    texts_dir = current_dir / 'texts'
+    if not texts_dir.exists():
+        # Try parent directory
+        texts_dir = current_dir.parent / 'texts'
+    
+    italian_file = texts_dir / 'italian.xml'
+    english_file = texts_dir / 'english.xml'
+    
+    # Skip test if files don't exist
+    if not italian_file.exists() or not english_file.exists():
+        pytest.skip(f"Test files not found: {italian_file} or {english_file}")
     
     # Load files
-    try:
-        with open('texts/italian.xml', 'r', encoding='utf-8') as f:
-            italian_xml = f.read()
-        print("✓ Loaded italian.xml")
-        
-        with open('texts/english.xml', 'r', encoding='utf-8') as f:
-            english_xml = f.read()
-        print("✓ Loaded english.xml")
-        
-    except FileNotFoundError as e:
-        print(f"✗ File not found: {e}")
-        return
+    with open(italian_file, 'r', encoding='utf-8') as f:
+        italian_xml = f.read()
     
-    # Test alignment
-    tei_service = MockTEIService()
+    with open(english_file, 'r', encoding='utf-8') as f:
+        english_xml = f.read()
     
+    # Verify files were loaded
+    assert len(italian_xml) > 100, "Italian XML file appears to be empty or too small"
+    assert len(english_xml) > 100, "English XML file appears to be empty or too small"
+    assert '<TEI' in italian_xml, "Italian file doesn't appear to be valid TEI"
+    assert '<TEI' in english_xml, "English file doesn't appear to be valid TEI"
+    
+    # Create real services
+    bertalign_service = BertalignService()
+    tei_service = TEIService(bertalign_service)
+    
+    # Test alignment using real TEI service
+    result = tei_service.align_tei_documents(
+        italian_xml, 
+        english_xml, 
+        source_language="it", 
+        target_language="en"
+    )
+    
+    # Verify result structure (should match real TEI service output)
+    assert isinstance(result, dict), "Result should be a dictionary"
+    required_keys = ['aligned_xml', 'source_language', 'target_language', 'alignment_count', 'processing_time']
+    for key in required_keys:
+        assert key in result, f"Missing key '{key}' in result"
+    
+    # Verify result values
+    assert result['source_language'] == 'it', f"Expected source language 'it', got '{result['source_language']}'"
+    assert result['target_language'] == 'en', f"Expected target language 'en', got '{result['target_language']}'"
+    assert result['alignment_count'] > 0, "No alignments were created"
+    assert result['processing_time'] > 0, "Processing time should be positive"
+    assert len(result['aligned_xml']) > 100, "Aligned XML appears to be empty or too small"
+    
+    # Verify aligned XML structure (real TEI service output)
+    aligned_xml = result['aligned_xml']
+    assert '<TEI' in aligned_xml, "TEI root element missing"
+    assert '<standOff>' in aligned_xml, "standOff element missing"
+    assert '<linkGrp' in aligned_xml, "linkGrp element missing"
+    assert 'xml:id=' in aligned_xml, "xml:id attributes missing"
+    
+    # Test individual parsing as well
+    source_doc = tei_service.parse_tei_file(italian_xml)
+    target_doc = tei_service.parse_tei_file(english_xml)
+    
+    # Verify parsing results
+    assert source_doc.language in ['it', 'unknown'], f"Unexpected source language: {source_doc.language}"
+    assert target_doc.language in ['en', 'unknown'], f"Unexpected target language: {target_doc.language}"
+    assert len(source_doc.text_elements) > 0, "No source text elements found"
+    assert len(target_doc.text_elements) > 0, "No target text elements found"
+    
+    # Verify text elements have content
+    source_texts = [elem.text for elem in source_doc.text_elements if elem.text.strip()]
+    target_texts = [elem.text for elem in target_doc.text_elements if elem.text.strip()]
+    assert len(source_texts) > 0, "No source text content found"
+    assert len(target_texts) > 0, "No target text content found"
+    
+    # Optionally save result for inspection
+    output_file = texts_dir / 'test_aligned_output.xml'
     try:
-        result = tei_service.align_tei_documents(italian_xml, english_xml)
-        
-        print(f"\n✓ Alignment completed:")
-        print(f"  - Source language: {result['source_language']}")
-        print(f"  - Target language: {result['target_language']}")
-        print(f"  - Alignments created: {result['alignment_count']}")
-        print(f"  - Processing time: {result['processing_time']:.2f}s")
-        print(f"  - Output XML length: {len(result['aligned_xml'])} chars")
-        
-        # Save result
-        with open('texts/test_aligned_output.xml', 'w', encoding='utf-8') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             f.write(result['aligned_xml'])
-        print("✓ Saved result to texts/test_aligned_output.xml")
-        
-        # Show preview
-        print(f"\nXML Preview:\n{result['aligned_xml'][:800]}...")
-        
-    except Exception as e:
-        print(f"✗ Alignment failed: {e}")
-        import traceback
-        traceback.print_exc()
+    except Exception:
+        # Don't fail test if we can't write output file
+        pass
 
 if __name__ == "__main__":
-    test_with_actual_files()
+    print("=== Testing with actual TEI files (using real services) ===\n")
+    try:
+        test_with_actual_files()
+        print("✓ Test completed successfully")
+    except Exception as e:
+        print(f"✗ Test failed: {e}")
+        import traceback
+        traceback.print_exc()

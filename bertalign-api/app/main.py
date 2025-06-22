@@ -12,12 +12,12 @@ from app.models import HealthResponse
 app = FastAPI(
     title="Bertalign API",
     description="""
-    ## Multilingual Sentence Alignment Service
+    Multilingual Sentence Alignment Service
 
     The Bertalign API provides semantic sentence alignment using the LaBSE (Language-agnostic BERT Sentence Embedding) model. 
     It supports 25 languages and can align both plain text and TEI XML documents.
 
-    ### Features
+    Features
 
     - **Semantic Alignment**: Uses state-of-the-art embeddings for accurate sentence mapping
     - **25 Languages Supported**: ca, zh, cs, da, nl, en, fi, fr, de, el, hu, is, it, lt, lv, no, pl, pt, ro, ru, sk, sl, es, sv, tr
@@ -25,7 +25,7 @@ app = FastAPI(
     - **Configurable Parameters**: Fine-tune alignment behavior with multiple parameters
     - **Fast Processing**: Optimized for real-time alignment (0.2-3s response times)
 
-    ### Quick Start
+    Quick Start
 
     1. **Basic Text Alignment**: Use `POST /align` with source and target texts
     2. **TEI Document Alignment**: Use `POST /align/tei` with TEI XML documents

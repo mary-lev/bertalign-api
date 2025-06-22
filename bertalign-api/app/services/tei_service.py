@@ -151,9 +151,9 @@ class TEIService:
             source_doc = self.parse_tei_file(source_xml)
             target_doc = self.parse_tei_file(target_xml)
             
-            # Use provided languages or fall back to extracted ones
-            final_source_lang = source_language or source_doc.language
-            final_target_lang = target_language or target_doc.language
+            # Use provided languages or fall back to extracted ones, with defaults
+            final_source_lang = source_language or (source_doc.language if source_doc.language != 'unknown' else 'en')
+            final_target_lang = target_language or (target_doc.language if target_doc.language != 'unknown' else 'en')
             
             # Extract texts for alignment
             source_texts = [elem.text for elem in source_doc.text_elements]
@@ -166,13 +166,7 @@ class TEIService:
                 target_text='\n'.join(target_texts),
                 source_language=final_source_lang,
                 target_language=final_target_lang,
-                is_split=True,  # Already split into sentences/paragraphs
-                max_align=self.bertalign_service.max_align,
-                top_k=self.bertalign_service.top_k,
-                win=self.bertalign_service.win,
-                skip=self.bertalign_service.skip,
-                margin=self.bertalign_service.margin,
-                len_penalty=self.bertalign_service.len_penalty
+                is_split=True  # Already split into sentences/paragraphs
             )
             
             # Perform alignment
