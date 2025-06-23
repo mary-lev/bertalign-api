@@ -1,0 +1,58 @@
+# Development documentation (should not be in repo)
+CLAUDE.md
+DEVELOPMENT_PLAN.md
+
+# Virtual environments
+bertalign-api-env/
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+
+# Model files (too large for git)
+*.model
+*.bin
+PERFORMANCE.md

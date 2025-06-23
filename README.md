@@ -78,6 +78,75 @@ curl -X POST "http://localhost:8000/align/tei" \
   }'
 ```
 
+**Response:**
+```json
+{
+  "aligned_xml": "<teiCorpus version=\"3.3.0\" xmlns=\"http://www.tei-c.org/ns/1.0\">...</teiCorpus>",
+  "source_language": "en",
+  "target_language": "fr",
+  "alignment_count": 15,
+  "processing_time": 1.2
+}
+```
+
+The `aligned_xml` contains a complete TEI corpus with:
+```xml
+<teiCorpus version="3.3.0" xmlns="http://www.tei-c.org/ns/1.0">
+    <!-- Corpus-level header with alignment metadata -->
+    <teiHeader>
+        <fileDesc>
+            <titleStmt><title>Aligned Parallel Texts</title></titleStmt>
+            <publicationStmt><p>Aligned using Bertalign API</p></publicationStmt>
+        </fileDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="en">Source language: en</language>
+                <language ident="fr">Target language: fr</language>
+            </langUsage>
+        </profileDesc>
+    </teiHeader>
+    
+    <!-- StandOff alignment links -->
+    <standOff>
+        <linkGrp type="translation">
+            <link target="#uuid-source-1 #uuid-target-1" type="Linguistic"/>
+            <link target="#uuid-source-2 #uuid-target-2" type="Linguistic"/>
+            <!-- One link per aligned paragraph pair -->
+        </linkGrp>
+    </standOff>
+    
+    <!-- Complete source TEI document (structure preserved) -->
+    <TEI>
+        <teiHeader><!-- All original metadata preserved --></teiHeader>
+        <text>
+            <body>
+                <div xml:id="original-div">
+                    <pb/>
+                    <head type="main">Original heading preserved</head>
+                    <p xml:id="uuid-source-1">Aligned source paragraph...</p>
+                    <p>Unaligned source paragraph (no xml:id)</p>
+                </div>
+            </body>
+        </text>
+    </TEI>
+    
+    <!-- Complete target TEI document (structure preserved) -->
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+        <teiHeader><!-- All original metadata preserved --></teiHeader>
+        <text>
+            <body>
+                <div xml:id="original-div">
+                    <pb/>
+                    <head type="main">Original heading preserved</head>
+                    <p xml:id="uuid-target-1">Aligned target paragraph...</p>
+                    <p>Unaligned target paragraph (no xml:id)</p>
+                </div>
+            </body>
+        </text>
+    </TEI>
+</teiCorpus>
+```
+
 ## Docker Deployment
 
 ```bash

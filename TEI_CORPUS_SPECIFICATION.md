@@ -4,18 +4,10 @@
 
 The Bertalign API should produce **TEI-compliant parallel corpora** following TEI P5 guidelines for corpus encoding and standOff annotation.
 
-## Current vs. Target Implementation
-
-### ❌ Current Implementation Issues
-- Creates simple `<TEI>` root instead of `<teiCorpus>`
-- Loses original TEI document structure (flattens to simple `<p>` elements)
-- Replaces original metadata with simplified alignment header
-- Uses `<group>` elements instead of preserving original TEI documents
-- Doesn't maintain original `<div>`, `<pb>`, `<head>` hierarchy
-
-### ✅ Target Implementation Requirements
+### Target Implementation Requirements
 
 #### 1. Root Structure: `<teiCorpus>`
+
 ```xml
 <teiCorpus version="3.3.0" xmlns="http://www.tei-c.org/ns/1.0">
     <!-- Corpus header -->
@@ -26,6 +18,7 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ```
 
 #### 2. Corpus-Level Header
+
 ```xml
 <teiHeader>
     <fileDesc>
@@ -42,6 +35,7 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ```
 
 #### 3. StandOff Alignment Annotations
+
 ```xml
 <standOff>
     <linkGrp type="translation">
@@ -52,6 +46,7 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ```
 
 #### 4. Complete Source Document Preservation
+
 ```xml
 <TEI>
     <teiHeader>
@@ -68,17 +63,17 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
                 <pb/> <!-- PRESERVE page breaks -->
                 <head type="main">A Lezioni del semestre invernale 1921-1922</head>
                 <head type="subtype"><date>14 novembre 1921</date></head>
-                
+            
                 <!-- Add xml:id ONLY for aligned paragraphs -->
                 <p xml:id="72f38fc9-2c66-4e03-ac44-b1fdc25617a2">
                     Come introduzione un breve chiarimento concettuale...
                 </p>
-                
+            
                 <!-- Unaligned paragraphs remain unchanged -->
                 <p>
                     In un altro caso un alimento ha conseguenze dannose...
                 </p>
-                
+            
                 <pb/> <!-- PRESERVE all original elements -->
             </div>
         </body>
@@ -88,6 +83,7 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ```
 
 #### 5. Complete Target Document Preservation
+
 - Same principles as source document
 - Complete original structure maintained
 - Only aligned paragraphs get `xml:id` attributes
@@ -96,24 +92,28 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ## Implementation Requirements
 
 ### 1. Structure Preservation
+
 - **MUST** maintain complete original TEI hierarchy
 - **MUST** preserve all `<div>`, `<pb>`, `<head>` elements and their attributes
 - **MUST** maintain original `xml:id` attributes from source documents
 - **MUST** preserve element ordering and nesting
 
-### 2. Metadata Preservation  
+### 2. Metadata Preservation
+
 - **MUST** preserve complete original `<teiHeader>` for both documents
 - **MUST** maintain all author, title, publication information
 - **MUST** preserve bibliographic data and source descriptions
 - **MUST** maintain all responsibility statements and credits
 
 ### 3. Alignment Annotation
+
 - **MUST** use TEI P5 compliant standOff structure
 - **MUST** generate UUID `xml:id` only for aligned paragraphs
 - **MUST** create `<link>` elements with proper target references
 - **MUST** use `type="Linguistic"` for alignment links
 
 ### 4. TEI P5 Compliance
+
 - **MUST** use `<teiCorpus>` as root element with proper versioning
 - **MUST** handle namespaces correctly for multiple documents
 - **MUST** follow TEI guidelines for parallel corpus structure
@@ -130,15 +130,17 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ## Technical Implementation Notes
 
 ### Current Service Method to Update
+
 - `app/services/tei_service.py` → `_generate_aligned_tei()`
 - Replace current simple structure generation
 - Implement proper `<teiCorpus>` creation with preserved documents
 
 ### Key Changes Required
+
 1. Create `<teiCorpus>` root with corpus header
 2. Add standOff section with alignment links
 3. Include complete original source TEI document
-4. Include complete original target TEI document  
+4. Include complete original target TEI document
 5. Add `xml:id` attributes only to aligned paragraphs
 6. Preserve all original structure and metadata
 
