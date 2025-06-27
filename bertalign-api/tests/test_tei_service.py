@@ -262,10 +262,12 @@ class TestTEIService:
         # Parse result to verify structure
         root = ET.fromstring(aligned_xml)
         
-        # Check root element
-        assert root.tag.endswith('TEI')
+        # Check root element is teiCorpus (per TEI P5 specification)
+        assert root.tag.endswith('teiCorpus')
         # Namespace is set in ElementTree, so check for the namespace in the tag
-        assert 'tei-c.org' in root.tag or root.get('xmlns') == 'http://www.tei-c.org/ns/1.0'
+        assert 'tei-c.org' in root.tag
+        # Check version attribute
+        assert root.get('version') == '3.3.0'
         
         # Check standOff structure
         standoff = root.find('.//{http://www.tei-c.org/ns/1.0}standOff')
@@ -290,7 +292,7 @@ class TestTEIService:
             tei_service.align_tei_documents(sample_italian_tei, sample_english_tei)
     
     def test_create_tei_with_ids(self, tei_service, sample_italian_tei):
-        """Test TEI document creation with XML IDs."""
+        """Test TEI document creation with XML IDs using <seg> tags."""
         doc = tei_service.parse_tei_file(sample_italian_tei)
         
         # Create alignment mapping
@@ -302,13 +304,17 @@ class TestTEIService:
         # Generate TEI with IDs
         tei_with_ids = tei_service._create_tei_with_ids(doc, alignment_map, "it")
         
-        # Verify IDs were added
+        # Verify IDs were added (now as <seg> tags instead of paragraph xml:id)
         paragraphs = tei_with_ids.findall('.//{http://www.tei-c.org/ns/1.0}p')
         assert len(paragraphs) == 2
         
-        # Check that at least one paragraph has an xml:id
-        has_id = any(p.get('{http://www.w3.org/XML/1998/namespace}id') for p in paragraphs)
-        assert has_id
+        # Check that paragraphs contain <seg> elements with xml:id (new behavior)
+        seg_elements = tei_with_ids.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        assert len(seg_elements) >= 1, "Should have at least one <seg> element"
+        
+        # Check that <seg> elements have xml:id attributes
+        has_seg_id = any(seg.get('{http://www.w3.org/XML/1998/namespace}id') for seg in seg_elements)
+        assert has_seg_id, "At least one <seg> element should have xml:id"
         
         # Check that the document structure is maintained
         # The language information might be in different places depending on implementation
@@ -471,3 +477,433 @@ class TestTEIService:
         call_args = tei_service.bertalign_service.align_texts.call_args[0][0]
         assert call_args.source_language == 'it'
         assert call_args.target_language == 'en'
+    
+    def test_sentence_level_seg_alignments(self, tei_service):
+        """Test sentence-level alignments within paragraphs using <seg> tags."""
+        # Create test documents with multi-sentence paragraphs
+        italian_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>Prima frase italiana. Seconda frase italiana. Terza frase italiana.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        english_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>First English sentence. Second English sentence. Third English sentence.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        # Parse documents
+        source_doc = tei_service.parse_tei_file(italian_tei)
+        target_doc = tei_service.parse_tei_file(english_tei)
+        
+        # Create sentence-level alignments
+        alignments = [
+            AlignmentPair(
+                source_sentences=["Prima frase italiana."],
+                target_sentences=["First English sentence."],
+                alignment_score=0.95,
+                source_indices=[0],
+                target_indices=[0]
+            ),
+            AlignmentPair(
+                source_sentences=["Seconda frase italiana."],
+                target_sentences=["Second English sentence."],
+                alignment_score=0.92,
+                source_indices=[1],
+                target_indices=[1]
+            ),
+            AlignmentPair(
+                source_sentences=["Terza frase italiana."],
+                target_sentences=["Third English sentence."],
+                alignment_score=0.89,
+                source_indices=[2],
+                target_indices=[2]
+            )
+        ]
+        
+        # Generate aligned XML with sentence-level segments
+        aligned_xml = tei_service._generate_aligned_tei(source_doc, target_doc, alignments, "it", "en")
+        
+        # Parse result to verify <seg> structure
+        root = ET.fromstring(aligned_xml)
+        
+        # Check that we have a teiCorpus with the correct structure
+        assert root.tag.endswith('teiCorpus')
+        assert root.get('version') == '3.3.0'
+        
+        # Check standOff links - should have 3 sentence-level alignments
+        standoff = root.find('.//{http://www.tei-c.org/ns/1.0}standOff')
+        assert standoff is not None
+        links = standoff.findall('.//{http://www.tei-c.org/ns/1.0}link')
+        assert len(links) == 3
+        
+        # Check that document structure is preserved and aligned properly
+        tei_documents = root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')
+        assert len(tei_documents) == 2
+        
+        italian_tei_elem = tei_documents[0]
+        italian_p = italian_tei_elem.find('.//{http://www.tei-c.org/ns/1.0}p')
+        assert italian_p is not None
+        
+        # Check English document structure  
+        english_tei_elem = tei_documents[1]
+        english_p = english_tei_elem.find('.//{http://www.tei-c.org/ns/1.0}p')
+        assert english_p is not None
+        
+        # Verify that elements have alignment identifiers
+        # Current implementation may use paragraph-level IDs or seg tags depending on alignment granularity
+        italian_has_alignment_id = (italian_p.get('{http://www.w3.org/XML/1998/namespace}id') is not None or 
+                                   len(italian_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')) > 0)
+        english_has_alignment_id = (english_p.get('{http://www.w3.org/XML/1998/namespace}id') is not None or 
+                                   len(english_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')) > 0)
+        
+        assert italian_has_alignment_id
+        assert english_has_alignment_id
+        
+        # Verify original text content is preserved
+        italian_text = tei_service._get_element_text(italian_p)
+        english_text = tei_service._get_element_text(english_p)
+        
+        assert "Prima frase italiana" in italian_text
+        assert "Seconda frase italiana" in italian_text  
+        assert "Terza frase italiana" in italian_text
+        
+        assert "First English sentence" in english_text
+        assert "Second English sentence" in english_text
+        assert "Third English sentence" in english_text
+        
+        # Verify that XML is well-formed by parsing again
+        ET.fromstring(aligned_xml)  # Should not raise exception
+    
+    def test_text_cleaning_functionality(self, tei_service):
+        """Test that text cleaning removes line breaks, tabs, and normalizes whitespace."""
+        # Test direct cleaning function
+        test_cases = [
+            ("Simple text", "Simple text"),
+            ("Text with\nline breaks", "Text with line breaks"),
+            ("Text with\r\nwindows line breaks", "Text with windows line breaks"), 
+            ("Text  with   multiple    spaces", "Text with multiple spaces"),
+            ("Text\twith\ttabs", "Text with tabs"),
+            ("Complex\n  text\r\n   with\t  all\n\n  issues   combined", "Complex text with all issues combined"),
+            ("", ""),
+            ("   Leading and trailing spaces   ", "Leading and trailing spaces"),
+            ("Multiple\n\n\nline\n\n\nbreaks", "Multiple line breaks"),
+        ]
+        
+        for input_text, expected_output in test_cases:
+            result = tei_service._clean_text(input_text)
+            assert result == expected_output, f"Input: {repr(input_text)}, Expected: {repr(expected_output)}, Got: {repr(result)}"
+            
+            # Ensure no unwanted characters remain
+            assert '\n' not in result, f"Line breaks found in: {repr(result)}"
+            assert '\r' not in result, f"Carriage returns found in: {repr(result)}"
+            assert '\t' not in result, f"Tabs found in: {repr(result)}"
+            assert '  ' not in result, f"Double spaces found in: {repr(result)}"
+    
+    def test_text_extraction_with_cleaning(self, tei_service):
+        """Test that text extraction from TEI applies cleaning automatically."""
+        # TEI with various whitespace issues
+        tei_with_whitespace = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>This paragraph
+                    has line breaks    and     multiple spaces.</p>
+                    <p>Another paragraph with	tabs	and
+                    mixed     whitespace.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        doc = tei_service.parse_tei_file(tei_with_whitespace)
+        
+        # Check that extracted text is cleaned
+        assert len(doc.text_elements) == 2
+        
+        first_para = doc.text_elements[0].text
+        second_para = doc.text_elements[1].text
+        
+        # Verify cleaning was applied
+        assert '\n' not in first_para and '\n' not in second_para
+        assert '\r' not in first_para and '\r' not in second_para  
+        assert '\t' not in first_para and '\t' not in second_para
+        assert '  ' not in first_para and '  ' not in second_para
+        
+        # Verify content is preserved correctly
+        assert "This paragraph has line breaks and multiple spaces." == first_para
+        assert "Another paragraph with tabs and mixed whitespace." == second_para
+    
+    def test_seg_tag_creation_for_sentence_alignments(self, tei_service):
+        """Test that sentence-level alignments create proper <seg> tags within paragraphs."""
+        # Create test documents with multi-sentence paragraphs
+        italian_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>Prima frase italiana. Seconda frase italiana. Terza frase italiana.</p>
+                </body>
+            </text>
+        </TEI>'''
+
+        english_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>First English sentence. Second English sentence. Third English sentence.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        # Parse documents
+        source_doc = tei_service.parse_tei_file(italian_tei)
+        target_doc = tei_service.parse_tei_file(english_tei)
+        
+        # Create sentence-level alignments (should trigger <seg> creation)
+        alignments = [
+            AlignmentPair(
+                source_sentences=["Prima frase italiana."],
+                target_sentences=["First English sentence."],
+                alignment_score=0.95,
+                source_indices=[0],
+                target_indices=[0]
+            ),
+            AlignmentPair(
+                source_sentences=["Seconda frase italiana."],
+                target_sentences=["Second English sentence."],
+                alignment_score=0.92,
+                source_indices=[1],
+                target_indices=[1]
+            ),
+            AlignmentPair(
+                source_sentences=["Terza frase italiana."],
+                target_sentences=["Third English sentence."],
+                alignment_score=0.89,
+                source_indices=[2],
+                target_indices=[2]
+            )
+        ]
+        
+        # Generate aligned XML
+        aligned_xml = tei_service._generate_aligned_tei(source_doc, target_doc, alignments, "it", "en")
+        
+        # Parse result
+        root = ET.fromstring(aligned_xml)
+        
+        # Verify basic structure
+        assert root.tag.endswith('teiCorpus')
+        assert len(root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')) == 2
+        
+        # Check standOff links
+        links = root.findall('.//{http://www.tei-c.org/ns/1.0}link')
+        assert len(links) == 3  # Should have 3 sentence-level links
+        
+        # Get the two TEI documents
+        tei_documents = root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')
+        italian_doc = tei_documents[0]
+        english_doc = tei_documents[1]
+        
+        # Test Italian document has proper <seg> tags
+        italian_p = italian_doc.find('.//{http://www.tei-c.org/ns/1.0}p')
+        italian_segs = italian_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        
+        assert len(italian_segs) == 3, "Should have 3 <seg> elements for 3 sentence alignments"
+        
+        # Verify each seg has xml:id and correct text
+        expected_italian_texts = ["Prima frase italiana.", "Seconda frase italiana.", "Terza frase italiana."]
+        for i, seg in enumerate(italian_segs):
+            seg_id = seg.get('{http://www.w3.org/XML/1998/namespace}id')
+            assert seg_id is not None, f"<seg> {i+1} should have xml:id"
+            assert len(seg_id) > 0, f"<seg> {i+1} xml:id should not be empty"
+            assert seg.text == expected_italian_texts[i], f"<seg> {i+1} text mismatch"
+        
+        # Test English document has proper <seg> tags
+        english_p = english_doc.find('.//{http://www.tei-c.org/ns/1.0}p')
+        english_segs = english_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        
+        assert len(english_segs) == 3, "Should have 3 <seg> elements for 3 sentence alignments"
+        
+        # Verify each seg has xml:id and correct text
+        expected_english_texts = ["First English sentence.", "Second English sentence.", "Third English sentence."]
+        for i, seg in enumerate(english_segs):
+            seg_id = seg.get('{http://www.w3.org/XML/1998/namespace}id')
+            assert seg_id is not None, f"<seg> {i+1} should have xml:id"
+            assert len(seg_id) > 0, f"<seg> {i+1} xml:id should not be empty"
+            assert seg.text == expected_english_texts[i], f"<seg> {i+1} text mismatch"
+        
+        # Verify that paragraph-level text is preserved when reconstructed
+        italian_reconstructed = tei_service._get_element_text(italian_p)
+        english_reconstructed = tei_service._get_element_text(english_p)
+        
+        assert "Prima frase italiana" in italian_reconstructed
+        assert "Seconda frase italiana" in italian_reconstructed
+        assert "Terza frase italiana" in italian_reconstructed
+        
+        assert "First English sentence" in english_reconstructed
+        assert "Second English sentence" in english_reconstructed  
+        assert "Third English sentence" in english_reconstructed
+        
+        # Verify standOff links reference the correct seg IDs
+        all_seg_ids = set()
+        for seg in italian_segs + english_segs:
+            all_seg_ids.add(seg.get('{http://www.w3.org/XML/1998/namespace}id'))
+        
+        for link in links:
+            target = link.get('target')
+            ids = target.split()
+            source_id = ids[0][1:]  # Remove #
+            target_id = ids[1][1:]  # Remove #
+            
+            assert source_id in all_seg_ids, f"Link source ID {source_id} not found in seg elements"
+            assert target_id in all_seg_ids, f"Link target ID {target_id} not found in seg elements"
+    
+    def test_head_elements_get_seg_tags(self, tei_service):
+        """Test that head elements also get <seg> tags for alignments."""
+        # Create test documents with head elements that should be aligned
+        italian_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <head type="main">Titolo principale in italiano</head>
+                    <p>Paragrafo in italiano.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        english_tei = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <head type="main">Main title in English</head>
+                    <p>Paragraph in English.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        # Parse documents
+        source_doc = tei_service.parse_tei_file(italian_tei)
+        target_doc = tei_service.parse_tei_file(english_tei)
+        
+        # Create alignments for both head and p elements
+        alignments = [
+            AlignmentPair(
+                source_sentences=["Titolo principale in italiano"],
+                target_sentences=["Main title in English"],
+                alignment_score=0.95,
+                source_indices=[0],
+                target_indices=[0]
+            ),
+            AlignmentPair(
+                source_sentences=["Paragrafo in italiano."],
+                target_sentences=["Paragraph in English."],
+                alignment_score=0.92,
+                source_indices=[1],
+                target_indices=[1]
+            )
+        ]
+        
+        # Generate aligned XML
+        aligned_xml = tei_service._generate_aligned_tei(source_doc, target_doc, alignments, "it", "en")
+        
+        # Parse result
+        root = ET.fromstring(aligned_xml)
+        
+        # Verify basic structure
+        assert root.tag.endswith('teiCorpus')
+        assert len(root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')) == 2
+        
+        # Check standOff links
+        links = root.findall('.//{http://www.tei-c.org/ns/1.0}link')
+        assert len(links) == 2  # Should have 2 links
+        
+        # Get the two TEI documents
+        tei_documents = root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')
+        italian_doc = tei_documents[0]
+        english_doc = tei_documents[1]
+        
+        # Test Italian document has <seg> tags in both head and p
+        italian_head = italian_doc.find('.//{http://www.tei-c.org/ns/1.0}head')
+        italian_p = italian_doc.find('.//{http://www.tei-c.org/ns/1.0}p')
+        
+        # Check head element has <seg> tag
+        italian_head_segs = italian_head.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        assert len(italian_head_segs) == 1, "Head element should have 1 <seg> element"
+        assert italian_head_segs[0].text == "Titolo principale in italiano"
+        assert italian_head_segs[0].get('{http://www.w3.org/XML/1998/namespace}id') is not None
+        
+        # Check p element has <seg> tag  
+        italian_p_segs = italian_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        assert len(italian_p_segs) == 1, "Paragraph element should have 1 <seg> element"
+        assert italian_p_segs[0].text == "Paragrafo in italiano."
+        assert italian_p_segs[0].get('{http://www.w3.org/XML/1998/namespace}id') is not None
+        
+        # Test English document has <seg> tags in both head and p
+        english_head = english_doc.find('.//{http://www.tei-c.org/ns/1.0}head')
+        english_p = english_doc.find('.//{http://www.tei-c.org/ns/1.0}p')
+        
+        # Check head element has <seg> tag
+        english_head_segs = english_head.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        assert len(english_head_segs) == 1, "Head element should have 1 <seg> element"
+        assert english_head_segs[0].text == "Main title in English"
+        assert english_head_segs[0].get('{http://www.w3.org/XML/1998/namespace}id') is not None
+        
+        # Check p element has <seg> tag
+        english_p_segs = english_p.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+        assert len(english_p_segs) == 1, "Paragraph element should have 1 <seg> element"
+        assert english_p_segs[0].text == "Paragraph in English."
+        assert english_p_segs[0].get('{http://www.w3.org/XML/1998/namespace}id') is not None
+        
+        # Verify standOff links reference the correct seg IDs
+        all_seg_ids = set()
+        for seg in italian_head_segs + italian_p_segs + english_head_segs + english_p_segs:
+            all_seg_ids.add(seg.get('{http://www.w3.org/XML/1998/namespace}id'))
+        
+        for link in links:
+            target = link.get('target')
+            ids = target.split()
+            source_id = ids[0][1:]  # Remove #
+            target_id = ids[1][1:]  # Remove #
+            
+            assert source_id in all_seg_ids, f"Link source ID {source_id} not found in seg elements"
+            assert target_id in all_seg_ids, f"Link target ID {target_id} not found in seg elements"

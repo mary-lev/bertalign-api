@@ -47,6 +47,9 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 
 #### 4. Complete Source Document Preservation
 
+The system intelligently handles both paragraph-level and sentence-level alignments:
+
+**Paragraph-level alignment example:**
 ```xml
 <TEI>
     <teiHeader>
@@ -82,6 +85,45 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 </TEI>
 ```
 
+**Sentence-level alignment example (NEW):**
+```xml
+<TEI>
+    <teiHeader>
+        <!-- PRESERVE ALL original metadata -->
+        <titleStmt>
+            <title>Contributi alla teoria figurativa della forma</title>
+            <author>P. Klee</author>
+        </titleStmt>
+    </teiHeader>
+    <text>
+        <body>
+            <div xml:id="div_Klee_introduction">
+                <pb/>
+                <head type="main">A Lezioni del semestre invernale 1921-1922</head>
+                <head type="subtype"><date>14 novembre 1921</date></head>
+            
+                <!-- Sentence-level alignments use <seg> tags within paragraphs -->
+                <p>
+                    <seg xml:id="sent-uuid-1">Come introduzione un breve chiarimento concettuale.</seg>
+                    <seg xml:id="sent-uuid-2">In primo luogo ciò che è contenuto nel concetto di analisi.</seg>
+                    <seg xml:id="sent-uuid-3">Nel linguaggio comune si sente per lo più parlare delle analisi dei chimici.</seg>
+                </p>
+            
+                <!-- Mixed: some sentences aligned, others not -->
+                <p>
+                    <seg xml:id="sent-uuid-4">Un certo preparato, per esempio, ha grande smercio.</seg>
+                    I buoni affari del produttore incuriosiscono gli altri produttori.
+                    <seg xml:id="sent-uuid-5">Il chimico deve procedere metodicamente.</seg>
+                </p>
+            
+                <pb/>
+            </div>
+        </body>
+    </text>
+    <facsimile/>
+</TEI>
+```
+
 #### 5. Complete Target Document Preservation
 
 - Same principles as source document
@@ -108,9 +150,11 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 ### 3. Alignment Annotation
 
 - **MUST** use TEI P5 compliant standOff structure
-- **MUST** generate UUID `xml:id` only for aligned paragraphs
+- **MUST** generate UUID `xml:id` for aligned elements (paragraphs or sentences)
 - **MUST** create `<link>` elements with proper target references
 - **MUST** use `type="Linguistic"` for alignment links
+- **ENHANCED** Support both paragraph-level and sentence-level alignments
+- **ENHANCED** Use `<seg>` tags for sentence-level alignments within paragraphs
 
 ### 4. TEI P5 Compliance
 
@@ -144,4 +188,89 @@ The Bertalign API should produce **TEI-compliant parallel corpora** following TE
 5. Add `xml:id` attributes only to aligned paragraphs
 6. Preserve all original structure and metadata
 
-This specification ensures the Bertalign API produces authentic, standards-compliant digital humanities resources.
+## Enhanced Alignment Behavior (NEW)
+
+### Intelligent Alignment Detection
+
+The Bertalign API now automatically determines the optimal alignment granularity:
+
+1. **Paragraph-level Alignment**: When bertalign aligns entire paragraphs, the `xml:id` is assigned directly to the `<p>` element
+
+2. **Sentence-level Alignment**: When bertalign creates alignments for individual sentences within paragraphs, the system:
+   - Preserves the original paragraph structure
+   - Wraps aligned sentences in `<seg xml:id="uuid">` elements
+   - Leaves unaligned sentences as plain text within the paragraph
+   - Maintains text flow and readability
+
+### StandOff Link Examples
+
+**Paragraph-level links:**
+```xml
+<link target="#para-uuid-it #para-uuid-en" type="Linguistic" />
+```
+
+**Sentence-level links:**
+```xml
+<link target="#sent-uuid-it-1 #sent-uuid-en-1" type="Linguistic" />
+<link target="#sent-uuid-it-2 #sent-uuid-en-2" type="Linguistic" />
+<link target="#sent-uuid-it-3 #sent-uuid-en-3" type="Linguistic" />
+```
+
+### Benefits for Researchers
+
+- **Fine-grained Analysis**: Access sentence-level correspondences for detailed linguistic analysis
+- **Preservation of Context**: Original paragraph structure maintains discourse coherence
+- **Flexible Granularity**: Automatic selection of appropriate alignment level
+- **TEI Compliance**: Full compatibility with existing TEI processing tools
+- **Mixed Alignments**: Support for documents with both paragraph and sentence-level alignments
+
+This specification ensures the Bertalign API produces authentic, standards-compliant digital humanities resources with enhanced granular alignment capabilities.
+
+## Known Issues and Future Improvements
+
+### Issue: Many-to-Many Alignment linkGrp Structure
+
+**Problem Description:**
+Currently, the system has a limitation with many-to-many alignments where multiple source segments align to multiple target segments. The current implementation assigns the same UUID to all segments that are part of the same alignment pair, but TEI standOff specification requires more sophisticated linkGrp structure.
+
+**Current Behavior:**
+```xml
+<!-- Italian headers (both get same UUID since they're from same alignment) -->
+<head><seg xml:id="6ab1bd5a-973e-4b36-9300-15ab6e578c39">A Lezioni del semestre invernale 1921-1922</seg></head>
+<head><seg xml:id="6ab1bd5a-973e-4b36-9300-15ab6e578c39">14 novembre 1921</seg></head>
+
+<!-- English header (gets different UUID for target) -->
+<head><seg xml:id="1735b949-c0bf-4998-81fe-2f5db918ca5e">A. Winter semester lectures 1921-1922 Nov. 14, 1921</seg></head>
+
+<!-- StandOff link (simple 1:1 linking) -->
+<link target="#6ab1bd5a-973e-4b36-9300-15ab6e578c39 #1735b949-c0bf-4998-81fe-2f5db918ca5e" type="Linguistic"/>
+```
+
+**Required Behavior for Proper Many-to-Many Support:**
+```xml
+<!-- Each segment should have unique UUID -->
+<head><seg xml:id="it-header-1">A Lezioni del semestre invernale 1921-1922</seg></head>
+<head><seg xml:id="it-header-2">14 novembre 1921</seg></head>
+<head><seg xml:id="en-header-1">A. Winter semester lectures 1921-1922 Nov. 14, 1921</seg></head>
+
+<!-- StandOff link should reference all related segments -->
+<link target="#it-header-1 #it-header-2 #en-header-1" type="Linguistic"/>
+```
+
+**Technical Requirements for Fix:**
+1. **Unique IDs per Segment**: Each `<seg>` element must have its own unique `xml:id`
+2. **Complex Link Targets**: The `target` attribute in `<link>` elements must list all segment IDs that participate in the many-to-many alignment
+3. **Alignment Grouping**: Need to track which segments belong to the same semantic alignment unit
+4. **TEI Compliance**: Ensure the multi-target linking follows TEI P5 guidelines for standOff annotation
+
+**Implementation Priority:**
+- **Medium Priority**: Current system works for most use cases but could be enhanced for complex alignments
+- **Research Impact**: Proper many-to-many linking would enable more sophisticated corpus linguistic analysis
+- **TEI Compliance**: Would make output fully compliant with TEI P5 standOff specifications
+
+**Location to Implement:**
+- `app/services/tei_service.py` → `_create_enhanced_alignment_map()` method
+- `app/services/tei_service.py` → `_generate_aligned_tei()` method for link generation
+- Need to modify UUID assignment strategy and link target generation logic
+
+This enhancement would provide complete TEI P5 compliance for complex alignment scenarios while maintaining backward compatibility with simpler alignments.

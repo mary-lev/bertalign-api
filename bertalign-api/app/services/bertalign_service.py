@@ -64,6 +64,7 @@ class BertalignService:
             ))
         
         processing_time = time.time() - start_time
+        aligner.print_sents()  # Print aligned sentences for debugging
         
         return AlignmentResponse(
             alignments=alignments,

@@ -103,7 +103,7 @@ async def align_tei_documents(request: TEIAlignmentRequest) -> TEIAlignmentRespo
             source_language=request.source_language,
             target_language=request.target_language
         )
-        
+        print(f"TEI alignment result: {result}")
         return TEIAlignmentResponse(**result)
         
     except ValueError as e:

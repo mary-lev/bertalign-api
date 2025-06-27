@@ -13,7 +13,7 @@ A FastAPI-based web service for multilingual sentence alignment using sentence-t
 - **Multilingual Support**: Align sentences across 25 languages
 - **Semantic Alignment**: Uses LaBSE embeddings for high-quality alignments
 - **Flexible Alignment**: Support for 1-1, 1-many, many-1, and many-many alignments
-- **TEI XML Support**: Align TEI documents with standOff annotations
+- **Enhanced TEI XML Support**: Align TEI documents with intelligent paragraph/sentence-level `<seg>` tags
 - **FastAPI Backend**: Auto-generated OpenAPI docs and validation
 - **Cloud Ready**: Dockerized for Google Cloud Run deployment
 - **Fast Processing**: Optimized response times (0.2-3 seconds)
@@ -33,6 +33,30 @@ uvicorn app.main:app --reload
 ```
 
 Visit `http://localhost:8000/docs` for interactive API documentation.
+
+### Frontend Integration
+
+The API includes **CORS support** for frontend applications. Test CORS configuration:
+
+```bash
+python test_cors.py  # Verify CORS headers are properly configured
+```
+
+**JavaScript/TypeScript example:**
+
+```javascript
+const response = await fetch('http://localhost:8000/align', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    source_text: "Hello world.",
+    target_text: "Bonjour le monde.",
+    source_language: "en", 
+    target_language: "fr"
+  })
+});
+const result = await response.json();
+```
 
 ### 1. Basic Text Alignment
 
@@ -89,7 +113,14 @@ curl -X POST "http://localhost:8000/align/tei" \
 }
 ```
 
-The `aligned_xml` contains a complete TEI corpus with:
+The `aligned_xml` contains a complete TEI corpus with **enhanced intelligent alignment**:
+
+**🔥 NEW: Smart Alignment Detection**
+- **Paragraph-level**: `xml:id` assigned to `<p>` elements when entire paragraphs align
+- **Sentence-level**: `<seg xml:id="">` tags within paragraphs for sentence alignments  
+- **Automatic**: System intelligently chooses optimal granularity
+- **Mixed support**: Documents can have both paragraph and sentence-level alignments
+
 ```xml
 <teiCorpus version="3.3.0" xmlns="http://www.tei-c.org/ns/1.0">
     <!-- Corpus-level header with alignment metadata -->
@@ -106,12 +137,14 @@ The `aligned_xml` contains a complete TEI corpus with:
         </profileDesc>
     </teiHeader>
     
-    <!-- StandOff alignment links -->
+    <!-- StandOff alignment links (paragraph OR sentence-level) -->
     <standOff>
         <linkGrp type="translation">
-            <link target="#uuid-source-1 #uuid-target-1" type="Linguistic"/>
-            <link target="#uuid-source-2 #uuid-target-2" type="Linguistic"/>
-            <!-- One link per aligned paragraph pair -->
+            <!-- Paragraph-level alignment -->
+            <link target="#para-uuid-1 #para-uuid-2" type="Linguistic"/>
+            <!-- Sentence-level alignments -->
+            <link target="#sent-uuid-1 #sent-uuid-3" type="Linguistic"/>
+            <link target="#sent-uuid-2 #sent-uuid-4" type="Linguistic"/>
         </linkGrp>
     </standOff>
     
@@ -123,8 +156,19 @@ The `aligned_xml` contains a complete TEI corpus with:
                 <div xml:id="original-div">
                     <pb/>
                     <head type="main">Original heading preserved</head>
-                    <p xml:id="uuid-source-1">Aligned source paragraph...</p>
-                    <p>Unaligned source paragraph (no xml:id)</p>
+                    
+                    <!-- Paragraph-level alignment -->
+                    <p xml:id="para-uuid-1">Entire paragraph aligned as one unit...</p>
+                    
+                    <!-- Sentence-level alignments within paragraph -->
+                    <p>
+                        <seg xml:id="sent-uuid-1">First aligned sentence.</seg>
+                        <seg xml:id="sent-uuid-2">Second aligned sentence.</seg>
+                        Some unaligned text remains as plain text.
+                    </p>
+                    
+                    <!-- Unaligned content -->
+                    <p>Unaligned paragraph (no xml:id)</p>
                 </div>
             </body>
         </text>
@@ -138,8 +182,17 @@ The `aligned_xml` contains a complete TEI corpus with:
                 <div xml:id="original-div">
                     <pb/>
                     <head type="main">Original heading preserved</head>
-                    <p xml:id="uuid-target-1">Aligned target paragraph...</p>
-                    <p>Unaligned target paragraph (no xml:id)</p>
+                    
+                    <!-- Corresponding alignments -->
+                    <p xml:id="para-uuid-2">Corresponding paragraph aligned...</p>
+                    
+                    <p>
+                        <seg xml:id="sent-uuid-3">First corresponding sentence.</seg>
+                        <seg xml:id="sent-uuid-4">Second corresponding sentence.</seg>
+                        Some unaligned text remains as plain text.
+                    </p>
+                    
+                    <p>Unaligned paragraph (no xml:id)</p>
                 </div>
             </body>
         </text>

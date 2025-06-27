@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import sys
 import os
@@ -57,6 +58,15 @@ app = FastAPI(
     },
     docs_url="/docs",
     redoc_url="/redoc"
+)
+
+# Add CORS middleware to enable frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 # Include routers

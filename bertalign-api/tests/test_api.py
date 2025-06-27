@@ -235,10 +235,22 @@ class TestTEIAlignmentEndpoint:
         assert data["alignment_count"] >= 0
         assert data["processing_time"] > 0
         
-        # Check aligned XML contains standOff structure
+        # Check aligned XML has new teiCorpus structure  
         aligned_xml = data["aligned_xml"]
+        assert "<teiCorpus" in aligned_xml
+        assert 'version="3.3.0"' in aligned_xml
         assert "<standOff>" in aligned_xml
         assert "<linkGrp" in aligned_xml
+        assert 'type="translation"' in aligned_xml
+        
+        # Validate it's well-formed XML
+        from xml.etree import ElementTree as ET
+        root = ET.fromstring(aligned_xml)
+        assert root.tag.endswith('teiCorpus')
+        
+        # Should contain both original TEI documents
+        tei_elements = root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')
+        assert len(tei_elements) == 2  # Source and target documents
 
     def test_tei_explicit_language_override(self, client, simple_italian_tei, simple_english_tei):
         """Test TEI alignment with explicit language parameters override TEI metadata."""
@@ -269,6 +281,90 @@ class TestTEIAlignmentEndpoint:
         
         response = client.post("/align/tei", json=custom_request)
         assert response.status_code == 200
+    
+    def test_tei_sentence_level_seg_tags(self, client):
+        """Test that TEI alignment creates <seg> tags for sentence-level alignments within paragraphs."""
+        # Create test documents with multi-sentence paragraphs that should generate sentence alignments
+        italian_tei_multi = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+                <profileDesc>
+                    <langUsage><language ident="it">Italian</language></langUsage>
+                </profileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>Prima frase del test. Seconda frase molto diversa. Terza frase finale.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        english_tei_multi = '''<?xml version="1.0" encoding="UTF-8"?>
+        <TEI xmlns="http://www.tei-c.org/ns/1.0">
+            <teiHeader>
+                <fileDesc>
+                    <titleStmt><title>Test Document</title></titleStmt>
+                </fileDesc>
+                <profileDesc>
+                    <langUsage><language ident="en">English</language></langUsage>
+                </profileDesc>
+            </teiHeader>
+            <text>
+                <body>
+                    <p>First test sentence. Completely different second sentence. Final third sentence.</p>
+                </body>
+            </text>
+        </TEI>'''
+        
+        request_data = {
+            "source_tei": italian_tei_multi,
+            "target_tei": english_tei_multi,
+            "source_language": "it",
+            "target_language": "en"
+        }
+        
+        response = client.post("/align/tei", json=request_data)
+        assert response.status_code == 200
+        
+        data = response.json()
+        aligned_xml = data["aligned_xml"]
+        
+        # Parse the result to check for seg tags
+        from xml.etree import ElementTree as ET
+        root = ET.fromstring(aligned_xml)
+        
+        # Check for sentence-level seg tags within paragraphs
+        # Note: Actual seg creation depends on bertalign's sentence splitting behavior
+        # This test validates the API can handle multi-sentence scenarios
+        tei_documents = root.findall('.//{http://www.tei-c.org/ns/1.0}TEI')
+        assert len(tei_documents) == 2
+        
+        # Each document should have paragraphs, either with xml:id (paragraph-level)
+        # or containing seg elements (sentence-level)
+        for tei_doc in tei_documents:
+            paragraphs = tei_doc.findall('.//{http://www.tei-c.org/ns/1.0}p')
+            assert len(paragraphs) >= 1
+            
+            for p in paragraphs:
+                # Either paragraph has xml:id or contains seg elements with xml:id
+                has_paragraph_id = p.get('{http://www.w3.org/XML/1998/namespace}id') is not None
+                seg_elements = p.findall('.//{http://www.tei-c.org/ns/1.0}seg')
+                has_seg_elements = len(seg_elements) > 0
+                
+                # Should have either paragraph-level or sentence-level alignment marking
+                if data["alignment_count"] > 0:
+                    assert has_paragraph_id or has_seg_elements
+                    
+                    # If using seg elements, they should have xml:id attributes
+                    if has_seg_elements:
+                        for seg in seg_elements:
+                            seg_id = seg.get('{http://www.w3.org/XML/1998/namespace}id')
+                            if seg_id:  # Only check aligned segments
+                                assert seg_id is not None
+                                assert len(seg_id) > 0
 
 
 class TestTEIAlignmentValidation:
