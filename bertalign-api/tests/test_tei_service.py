@@ -302,7 +302,7 @@ class TestTEIService:
         }
         
         # Generate TEI with IDs
-        tei_with_ids = tei_service._create_tei_with_ids(doc, alignment_map, "it")
+        tei_with_ids = tei_service._create_tei_with_ids(doc, alignment_map, "it", is_source=True)
         
         # Verify IDs were added (now as <seg> tags instead of paragraph xml:id)
         paragraphs = tei_with_ids.findall('.//{http://www.tei-c.org/ns/1.0}p')
@@ -907,3 +907,119 @@ class TestTEIService:
             
             assert source_id in all_seg_ids, f"Link source ID {source_id} not found in seg elements"
             assert target_id in all_seg_ids, f"Link target ID {target_id} not found in seg elements"
+
+    @patch("app.services.tei_service.uuid.uuid4")
+    def test_xml_id_uniqueness_many_to_many_alignment(self, mock_uuid, tei_service):
+        """Test that xml:id attributes are unique even in many-to-many alignments."""
+        # Create unique UUID sequence for testing
+        uuid_sequence = [f"uuid-{i}" for i in range(10)]
+        mock_uuids = []
+        for uid in uuid_sequence:
+            mock_obj = Mock()
+            mock_obj.__str__ = lambda self, uid=uid: uid
+            mock_uuids.append(mock_obj)
+        mock_uuid.side_effect = mock_uuids
+        
+        # TEI documents with multiple sentences that could create many-to-many alignments
+        source_tei = """<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt><title>Test</title></titleStmt>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <p>Prima frase. Seconda frase. Terza frase.</p>
+        </body>
+    </text>
+</TEI>"""
+        
+        target_tei = """<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt><title>Test</title></titleStmt>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <p>First sentence. Second sentence. Third sentence.</p>
+        </body>
+    </text>
+</TEI>"""
+        
+        # Mock alignment result with many-to-many alignment
+        mock_alignment = AlignmentResponse(
+            alignments=[
+                AlignmentPair(
+                    source_sentences=["Prima frase.", "Seconda frase."],
+                    target_sentences=["First sentence."],
+                    alignment_score=0.85,
+                    source_indices=[0, 1],
+                    target_indices=[0]
+                ),
+                AlignmentPair(
+                    source_sentences=["Terza frase."],
+                    target_sentences=["Second sentence.", "Third sentence."],
+                    alignment_score=0.90,
+                    source_indices=[2],
+                    target_indices=[1, 2]
+                )
+            ],
+            source_language="it",
+            target_language="en",
+            processing_time=0.5,
+            total_source_sentences=3,
+            total_target_sentences=3,
+            parameters=AlignmentRequest(
+                source_text="Prima frase. Seconda frase. Terza frase.",
+                target_text="First sentence. Second sentence. Third sentence.",
+                source_language="it",
+                target_language="en"
+            )
+        )
+        
+        tei_service.bertalign_service.align_texts.return_value = mock_alignment
+        
+        # Perform alignment
+        result = tei_service.align_tei_documents(source_tei, target_tei)
+        
+        # Parse result
+        aligned_xml = result["aligned_xml"]
+        root = ET.fromstring(aligned_xml)
+        
+        # Extract all xml:id attributes
+        xml_ids = []
+        for elem in root.iter():
+            xml_id = elem.get("{http://www.w3.org/XML/1998/namespace}id")
+            if xml_id:
+                xml_ids.append(xml_id)
+        
+        # Verify all xml:id attributes are unique
+        unique_ids = set(xml_ids)
+        assert len(xml_ids) == len(unique_ids), f"Duplicate xml:id found: {xml_ids}"
+        
+        # Verify we have the expected number of segments
+        seg_elements = root.findall(".//{http://www.tei-c.org/ns/1.0}seg")
+        assert len(seg_elements) > 0, "Should have seg elements"
+        
+        # Verify all seg elements have unique xml:id
+        seg_ids = [seg.get("{http://www.w3.org/XML/1998/namespace}id") for seg in seg_elements]
+        seg_ids = [sid for sid in seg_ids if sid]  # Filter out None
+        assert len(seg_ids) == len(set(seg_ids)), f"Duplicate seg xml:id found: {seg_ids}"
+        
+        # Verify linkGrp structure handles many-to-many correctly
+        links = root.findall(".//{http://www.tei-c.org/ns/1.0}link")
+        assert len(links) > 0, "Should have link elements"
+        
+        # Each link should reference valid, unique xml:id values
+        for link in links:
+            target = link.get("target")
+            ids = target.split()
+            # Remove # prefix from each ID
+            referenced_ids = [id_ref[1:] for id_ref in ids]
+            
+            # All referenced IDs should exist in the document
+            for ref_id in referenced_ids:
+                assert ref_id in unique_ids, f"Link references non-existent ID: {ref_id}"

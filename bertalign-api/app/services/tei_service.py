@@ -211,7 +211,8 @@ class TEIService:
         alignment_map = {
             'links': [],
             'source_elements': {},  # element_text -> {'uuid': str, 'element': TEIElement, 'alignment_type': str}
-            'target_elements': {}   # element_text -> {'uuid': str, 'element': TEIElement, 'alignment_type': str}
+            'target_elements': {},  # element_text -> {'uuid': str, 'element': TEIElement, 'alignment_type': str}
+            'alignment_groups': []  # Track groups of aligned segments for linkGrp generation
         }
         
         # Create mapping of original text elements
@@ -219,72 +220,86 @@ class TEIService:
         target_text_to_element = {elem.text.strip(): elem for elem in target_doc.text_elements if elem.text and elem.text.strip()}
         
         for alignment in alignments:
-            source_uuid = str(uuid.uuid4())
-            target_uuid = str(uuid.uuid4())
-            
             # Get the aligned text content
             source_text = ' '.join(alignment.source_sentences).strip()
             target_text = ' '.join(alignment.target_sentences).strip()
-            
+
             # Store both individual sentences AND combined forms to handle all cases
-            
+
             # First, try to find elements that match the combined alignment text
             source_element = self._find_best_matching_element(source_text, source_text_to_element)
             target_element = self._find_best_matching_element(target_text, target_text_to_element)
-            
+
+            # Track all UUIDs for this alignment group
+            alignment_group = {
+                'source_uuids': [],
+                'target_uuids': [],
+                'source_texts': [],
+                'target_texts': []
+            }
+
             # Store combined alignment text (handles cases like headers spanning multiple sentences)
             if source_element:
+                combined_uuid = str(uuid.uuid4())
                 source_alignment_type = self._determine_alignment_type(source_text, source_element)
                 alignment_map['source_elements'][source_text] = {
-                    'uuid': source_uuid,
+                    'uuid': combined_uuid,
                     'element': source_element,
                     'alignment_type': source_alignment_type,
                     'aligned_sentences': alignment.source_sentences
                 }
+                alignment_group['source_uuids'].append(combined_uuid)
+                alignment_group['source_texts'].append(source_text)
             
             if target_element:
+                combined_uuid = str(uuid.uuid4())
                 target_alignment_type = self._determine_alignment_type(target_text, target_element)
                 alignment_map['target_elements'][target_text] = {
-                    'uuid': target_uuid,
+                    'uuid': combined_uuid,
                     'element': target_element,
                     'alignment_type': target_alignment_type,
                     'aligned_sentences': alignment.target_sentences
                 }
+                alignment_group['target_uuids'].append(combined_uuid)
+                alignment_group['target_texts'].append(target_text)
             
             # Then store individual sentences (for cases where individual sentences match elements)
+            # Each sentence gets its own unique UUID
             for sentence in alignment.source_sentences:
                 sentence = sentence.strip()
                 if sentence and sentence not in alignment_map['source_elements']:
                     source_element = self._find_best_matching_element(sentence, source_text_to_element)
                     if source_element:
+                        sentence_uuid = str(uuid.uuid4())  # Generate unique UUID for each sentence
                         source_alignment_type = self._determine_alignment_type(sentence, source_element)
                         alignment_map['source_elements'][sentence] = {
-                            'uuid': source_uuid,
+                            'uuid': sentence_uuid,
                             'element': source_element,
                             'alignment_type': source_alignment_type,
                             'aligned_sentences': alignment.source_sentences
                         }
+                        alignment_group['source_uuids'].append(sentence_uuid)
+                        alignment_group['source_texts'].append(sentence)
             
             for sentence in alignment.target_sentences:
                 sentence = sentence.strip()
                 if sentence and sentence not in alignment_map['target_elements']:
                     target_element = self._find_best_matching_element(sentence, target_text_to_element)
                     if target_element:
+                        sentence_uuid = str(uuid.uuid4())  # Generate unique UUID for each sentence
                         target_alignment_type = self._determine_alignment_type(sentence, target_element)
                         alignment_map['target_elements'][sentence] = {
-                            'uuid': target_uuid,
+                            'uuid': sentence_uuid,
                             'element': target_element,
                             'alignment_type': target_alignment_type,
                             'aligned_sentences': alignment.target_sentences
                         }
+                        alignment_group['target_uuids'].append(sentence_uuid)
+                        alignment_group['target_texts'].append(sentence)
             
-            # Store link information
-            alignment_map['links'].append({
-                'source_uuid': source_uuid,
-                'target_uuid': target_uuid,
-                'source_text': source_text,
-                'target_text': target_text
-            })
+            # Store alignment group for proper linkGrp generation
+            if alignment_group['source_uuids'] and alignment_group['target_uuids']:
+                alignment_map['alignment_groups'].append(alignment_group)
         
         return alignment_map
     
@@ -360,27 +375,70 @@ class TEIService:
         
         # Create standOff with alignment links
         standoff = ET.SubElement(root, 'standOff')
+
+        # First, create all join elements and collect link references
+        join_counter = 1
+        link_references = []
+
+        for group in alignment_map['alignment_groups']:
+            source_uuids = group['source_uuids']
+            target_uuids = group['target_uuids']
+            
+            # Determine what to reference for source side
+            if len(source_uuids) > 1:
+                # Multiple source segments - create join
+                join_id = f"join{join_counter}"
+                join_counter += 1
+                source_targets = ' '.join(f"#{uuid}" for uuid in source_uuids)
+                ET.SubElement(standoff, 'join', attrib={
+                    'target': source_targets,
+                    'xml:id': join_id,
+                    'type': 'Linguistic'
+                })
+                source_ref = f"#{join_id}"
+            else:
+                # Single source segment - reference directly
+                source_ref = f"#{source_uuids[0]}"
+
+            # Determine what to reference for target side
+            if len(target_uuids) > 1:
+                # Multiple target segments - create join
+                join_id = f"join{join_counter}"
+                join_counter += 1
+                target_targets = ' '.join(f"#{uuid}" for uuid in target_uuids)
+                ET.SubElement(standoff, 'join', attrib={
+                    'target': target_targets,
+                    'xml:id': join_id,
+                    'type': 'Linguistic'
+                })
+                target_ref = f"#{join_id}"
+            else:
+                # Single target segment - reference directly
+                target_ref = f"#{target_uuids[0]}"
+
+            # Store link reference for later creation
+            link_references.append((source_ref, target_ref))
+
+        # Then create linkGrp and all link elements
         link_grp = ET.SubElement(standoff, 'linkGrp', attrib={'type': 'translation'})
-        
-        # Create link elements with proper target references using enhanced alignment map
-        for link_data in alignment_map['links']:
+        for source_ref, target_ref in link_references:
             ET.SubElement(link_grp, 'link', attrib={
-                'target': f"#{link_data['source_uuid']} #{link_data['target_uuid']}",
+                'target': f"{source_ref} {target_ref}",
                 'type': 'Linguistic'
             })
-        
+
         # Include complete original source TEI document with xml:id attributes for aligned elements
-        source_tei_with_ids = self._create_tei_with_ids(source_doc, alignment_map, source_language)
+        source_tei_with_ids = self._create_tei_with_ids(source_doc, alignment_map, source_language, is_source=True)
         root.append(source_tei_with_ids)
         
         # Include complete original target TEI document with xml:id attributes for aligned elements
-        target_tei_with_ids = self._create_tei_with_ids(target_doc, alignment_map, target_language)
+        target_tei_with_ids = self._create_tei_with_ids(target_doc, alignment_map, target_language, is_source=False)
         root.append(target_tei_with_ids)
         
         # Convert to string with proper formatting
         return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='unicode')
     
-    def _create_tei_with_ids(self, doc: TEIDocument, alignment_map: Dict[str, Any], language: str) -> Element:
+    def _create_tei_with_ids(self, doc: TEIDocument, alignment_map: Dict[str, Any], language: str, is_source: bool = True) -> Element:
         """Create TEI element with xml:id attributes for aligned elements and <seg> tags for sentence alignments."""
         
         # Create a copy of the original document
@@ -403,7 +461,7 @@ class TEIService:
         language_elem.text = language
         
         # Process alignments with new enhanced format
-        elements_map = alignment_map.get('source_elements', {}) if language in ['it', 'de', 'fr'] else alignment_map.get('target_elements', {})
+        elements_map = alignment_map.get('source_elements', {}) if is_source else alignment_map.get('target_elements', {})
         
         # Always create <seg> tags for all alignments regardless of element type or alignment granularity
         body = tei_copy.find('.//tei:body', self.ns)
@@ -423,7 +481,7 @@ class TEIService:
                         
                         # Always create <seg> tags for any matches found
                         if all_matches:
-                            self._create_seg_tags_for_sentences(elem, all_matches, elem_text_clean)
+                            self._create_seg_tags_for_sentences(elem, all_matches, elem_text_clean, elements_map)
         
         # Fallback for old alignment map format (simple text -> uuid mapping)
         if not elements_map and isinstance(alignment_map, dict):
@@ -465,18 +523,23 @@ class TEIService:
         
         return False
     
-    def _create_seg_tags_for_sentences(self, elem: Element, sentence_matches: List[Dict[str, Any]], full_text: str) -> None:
+    def _create_seg_tags_for_sentences(self, elem: Element, sentence_matches: List[Dict[str, Any]], full_text: str, elements_map: Dict[str, Any] = None) -> None:
         """Create <seg> tags for alignments within any element (paragraph, head, etc.)."""
         # Get the sentences we need to segment
         sentences_to_segment = []
         for match in sentence_matches:
             for sentence in match['aligned_sentences']:
                 if sentence.strip() and sentence.strip() in full_text:
+                    # Look up the individual sentence's UUID from elements_map
+                    sentence_uuid = match['uuid']  # default fallback
+                    if elements_map and sentence.strip() in elements_map:
+                        sentence_uuid = elements_map[sentence.strip()]['uuid']
+
                     sentences_to_segment.append({
                         'text': sentence.strip(),
-                        'uuid': match['uuid']
+                        'uuid': sentence_uuid
                     })
-        
+
         if not sentences_to_segment:
             # Fallback: assign first sentence UUID to element (should not happen with new approach)
             elem.set('{http://www.w3.org/XML/1998/namespace}id', sentence_matches[0]['uuid'])
