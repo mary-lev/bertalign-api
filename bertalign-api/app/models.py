@@ -249,33 +249,33 @@ class TEIAlignmentRequest(BaseModel):
     creating aligned parallel corpora with TEI-compliant markup.
     """
     
-    source_tei: str = Field(
+    languageA: str = Field(
         ...,
-        description="Source TEI XML document as string. Must be valid TEI XML with text content in <body> elements. Supports <p> and <head> elements for alignment",
+        description="Language A TEI XML document as string. Must be valid TEI XML with text content in <body> elements",
         min_length=1,
-        max_length=1000000,  # 1MB limit for XML content
+        max_length=1000000,
         example='<?xml version="1.0" encoding="UTF-8"?>\n<TEI xmlns="http://www.tei-c.org/ns/1.0">\n  <teiHeader>\n    <fileDesc>\n      <titleStmt><title>Example</title></titleStmt>\n    </fileDesc>\n  </teiHeader>\n  <text><body><p>Hello world.</p></body></text>\n</TEI>'
     )
     
-    target_tei: str = Field(
+    languageB: str = Field(
         ...,
-        description="Target TEI XML document as string. Should be the parallel/translated version of the source TEI document",
+        description="Language B TEI XML document as string. Should be the parallel/translated version of language A document",
         min_length=1,
-        max_length=1000000,  # 1MB limit for XML content
+        max_length=1000000,
         example='<?xml version="1.0" encoding="UTF-8"?>\n<TEI xmlns="http://www.tei-c.org/ns/1.0">\n  <teiHeader>\n    <fileDesc>\n      <titleStmt><title>Exemple</title></titleStmt>\n    </fileDesc>\n  </teiHeader>\n  <text><body><p>Bonjour le monde.</p></body></text>\n</TEI>'
     )
     
-    source_language: str = Field(
+    languageA_name: str = Field(
         ...,
-        description="ISO 639-1 language code for source document. Overrides any language specified in TEI metadata. Must be one of the 25 supported languages",
+        description="ISO 639-1 language code for language A document. Must be one of the 25 supported languages",
         pattern="^[a-z]{2}$",
         example="en"
     )
     
-    target_language: str = Field(
+    languageB_name: str = Field(
         ...,
-        description="ISO 639-1 language code for target document. Overrides any language specified in TEI metadata", 
-        pattern="^[a-z]{2}$",
+        description="ISO 639-1 language code for language B document",
+        pattern="^[a-z]{2}$", 
         example="fr"
     )
     
@@ -317,13 +317,13 @@ class TEIAlignmentRequest(BaseModel):
         description="Apply length penalty"
     )
     
-    @validator('source_tei', 'target_tei')
+    @validator('languageA', 'languageB')
     def validate_tei_not_empty(cls, v):
         if not v or not v.strip():
             raise ValueError('TEI XML cannot be empty or whitespace only')
         return v.strip()
     
-    @validator('source_language', 'target_language')
+    @validator('languageA_name', 'languageB_name')
     def validate_supported_language(cls, v):
         # Supported languages from bertalign/utils.py LANG.SPLITTER
         supported_langs = {

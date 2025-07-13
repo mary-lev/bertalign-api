@@ -98,10 +98,10 @@ async def align_tei_documents(request: TEIAlignmentRequest) -> TEIAlignmentRespo
         
         # Perform TEI alignment
         result = tei_service.align_tei_documents(
-            source_xml=request.source_tei,
-            target_xml=request.target_tei,
-            source_language=request.source_language,
-            target_language=request.target_language
+            source_xml=request.languageA,
+            target_xml=request.languageB,
+            source_language=request.languageA_name,
+            target_language=request.languageB_name
         )
         print(f"TEI alignment result: {result}")
         return TEIAlignmentResponse(**result)
