@@ -16,7 +16,8 @@ COPY requirements-api.txt .
 RUN pip install --no-cache-dir --default-timeout=120 -r requirements-api.txt
 
 # Pre-download the LaBSE model during build time to avoid cold start delays
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('LaBSE')"
+# RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('LaBSE')"
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('LaBSE').save('/app/LaBSE')"
 
 # Copy application code
 COPY . .
